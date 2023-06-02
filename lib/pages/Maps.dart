@@ -1,49 +1,78 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MapsPage extends StatefulWidget {
-  const MapsPage({super.key, required this.title});
-  final String title;
+  const MapsPage({super.key});
 
   @override
-  State<MapsPage> createState() => _MyHomePageState();
+  State<MapsPage> createState() => _MapsPageState();
 }
 
-class _MyHomePageState extends State<MapsPage> {
+class _MapsPageState extends State<MapsPage> {
+  List _maps = [];
+
+  Future<void> _fetchData() async {
+    const apiUrl = 'https://valorant-api.com/v1/maps';
+
+    final response = await http.get(Uri.parse(apiUrl));
+    final data = json.decode(response.body);
+
+    setState(() {
+      _maps = data["data"];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 30, 30, 30),
+        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
         appBar: AppBar(
-          title: Text(widget.title),
+          toolbarHeight: 100,
+          leading: Icon(Icons.arrow_back),
+          title: Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 30, right: 55),
+              child: SvgPicture.asset("./assets/valorant-logo.svg", width: 70, height: 70,),
+            ),),
         ),
         body: Container(
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 5),
-                alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.only(left: 40),
-                  width: MediaQuery.of(context).size.width,
-                  height: 140,
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        opacity: 0.7,
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            "https://media.valorant-api.com/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/splash.png",
-                          ))),
-                  child: const Text(
-                    "ASCENT",
-                    style: TextStyle(
-                      fontSize: 26,
-                      color: Colors.white,
-
-                    ),
-                  )
-              )
-            ],
+          child: _maps.isEmpty ? const Center(child: Text("Is loading"),) :
+          ListView.builder(
+            itemCount: _maps.length,
+              itemBuilder: (BuildContext context, index){
+                return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 40),
+                    width: MediaQuery.of(context).size.width,
+                    height: 140,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            opacity: 0.7,
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              _maps[index]["splash"],
+                            ))),
+                    child: Text(
+                      _maps[index]["displayName"],
+                      style: const TextStyle(
+                        fontFamily: 'valorant',
+                        fontSize: 26,
+                        color: Colors.white,
+                      ),
+                    )
+                );
+              }),
           ),
-        ));
+        );
   }
 }
