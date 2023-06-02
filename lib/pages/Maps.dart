@@ -40,7 +40,7 @@ class _MapsPageState extends State<MapsPage> {
           leading: Icon(Icons.arrow_back),
           title: Center(
             child: Container(
-              margin: const EdgeInsets.only(top: 30, right: 55),
+              margin: const EdgeInsets.only(top: 30, right: 60),
               child: SvgPicture.asset("./assets/valorant-logo.svg", width: 70, height: 70,),
             ),),
         ),
@@ -49,27 +49,33 @@ class _MapsPageState extends State<MapsPage> {
           ListView.builder(
             itemCount: _maps.length,
               itemBuilder: (BuildContext context, index){
-                return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 40),
-                    width: MediaQuery.of(context).size.width,
-                    height: 140,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            opacity: 0.7,
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              _maps[index]["splash"],
-                            ))),
-                    child: Text(
-                      _maps[index]["displayName"],
-                      style: const TextStyle(
-                        fontFamily: 'valorant',
-                        fontSize: 26,
-                        color: Colors.white,
-                      ),
-                    )
+                return InkWell(
+                  child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(left: 40),
+                      width: MediaQuery.of(context).size.width,
+                      height: 140,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              opacity: 0.7,
+                              fit: BoxFit.cover,
+                              // TODO: Scegliere listViewIcon (leggera ma peggiore) o splash (pesante ma migliore)
+                              image: NetworkImage(
+                                _maps[index]["listViewIcon"],
+                              ))),
+                      child: Text(
+                        _maps[index]["displayName"],
+                        style: const TextStyle(
+                          fontFamily: 'valorant',
+                          fontSize: 26,
+                          color: Colors.white,
+                        ),
+                      )
+                  ),
+                  onTap: (){
+                    print("Tapped");
+                  },
                 );
               }),
           ),
