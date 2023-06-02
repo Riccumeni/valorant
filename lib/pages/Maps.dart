@@ -34,51 +34,104 @@ class _MapsPageState extends State<MapsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-        appBar: AppBar(
-          toolbarHeight: 100,
-          leading: Icon(Icons.arrow_back),
-          title: Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 30, right: 60),
-              child: SvgPicture.asset("./assets/valorant-logo.svg", width: 70, height: 70,),
-            ),),
-        ),
-        body: Container(
-          child: _maps.isEmpty ? const Center(child: Text("Is loading"),) :
-          ListView.builder(
-            itemCount: _maps.length,
-              itemBuilder: (BuildContext context, index){
-                return InkWell(
-                  child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 40),
-                      width: MediaQuery.of(context).size.width,
-                      height: 140,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              opacity: 0.7,
-                              fit: BoxFit.cover,
-                              // TODO: Scegliere listViewIcon (leggera ma peggiore) o splash (pesante ma migliore)
-                              image: NetworkImage(
-                                _maps[index]["listViewIcon"],
-                              ))),
-                      child: Text(
-                        _maps[index]["displayName"],
-                        style: const TextStyle(
-                          fontFamily: 'valorant',
-                          fontSize: 26,
-                          color: Colors.white,
-                        ),
-                      )
-                  ),
-                  onTap: (){
-                    print("Tapped");
-                  },
-                );
-              }),
+      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+      appBar: AppBar(
+        toolbarHeight: 100,
+        leading: Icon(Icons.arrow_back),
+        title: Center(
+          child: Container(
+            margin: const EdgeInsets.only(top: 30, right: 60),
+            child: SvgPicture.asset(
+              "./assets/valorant-logo.svg",
+              width: 70,
+              height: 70,
+            ),
           ),
-        );
+        ),
+      ),
+      body: Container(
+        child: _maps.isEmpty
+            ? const Center(
+                child: Text("Is loading"),
+              )
+            : ListView.builder(
+                itemCount: _maps.length,
+                itemBuilder: (BuildContext context, index) {
+                  return InkWell(
+                    child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(left: 40),
+                        width: MediaQuery.of(context).size.width,
+                        height: 140,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                opacity: 0.7,
+                                fit: BoxFit.cover,
+                                // TODO: Scegliere listViewIcon (leggera ma peggiore) o splash (pesante ma migliore)
+                                image: NetworkImage(
+                                  _maps[index]["listViewIcon"],
+                                ))),
+                        child: Text(
+                          _maps[index]["displayName"],
+                          style: const TextStyle(
+                            fontFamily: 'valorant',
+                            fontSize: 26,
+                            color: Colors.white,
+                          ),
+                        )),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Details(maps: _maps[index]),
+                        ),
+                      );
+                    },
+                  );
+                }),
+      ),
+    );
+  }
+}
+
+class Details extends StatelessWidget {
+  final Map maps;
+
+  const Details({Key? key, required this.maps}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Usa l'oggetto `maps` per visualizzare i dettagli delle mappe selezionate
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Text('Skin Details'),
+        backgroundColor: Colors.black,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              child: Image.network(
+                maps["splash"],
+                width: MediaQuery.of(context).size.width,
+                height: 500,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 30),
+            Text(
+              maps["displayName"],
+              style: const TextStyle(
+                fontFamily: 'valorant',
+                fontSize: 26,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
