@@ -83,10 +83,16 @@ flutter:
     - family: valorant
       fonts:
         - asset: assets/valorant-font.ttf
+    - family: monument
+      fonts:
+        - asset: assets/MonumentExtended-Regular.otf
+    - family: poppins
+      fonts:
+        - asset: assets/Poppins-Regular.ttf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+  #       - asset: fonts/Schyler-Italic.otf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
