@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:valorant/pages/ChampionDetail.dart';
 import 'package:valorant/pages/Maps.dart';
 
 Map<int, Color> color =
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: colorCustom,
       ),
-      home: const MapsPage(),
+      home: const ChampionDetail(),
     );
   }
 }
