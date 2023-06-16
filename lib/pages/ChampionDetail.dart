@@ -8,7 +8,8 @@ import 'package:valorant/components/Ability.dart';
 import '../PaintTriangle.dart';
 
 class ChampionDetail extends StatefulWidget {
-  const ChampionDetail({Key? key}) : super(key: key);
+  final uuid;
+  const ChampionDetail({Key? key, required this.uuid}) : super(key: key);
 
   @override
   State<ChampionDetail> createState() => _ChampionDetailState();
@@ -37,7 +38,7 @@ class _ChampionDetailState extends State<ChampionDetail> {
 
 
   Future<Map<String, dynamic>> _fetchData() async {
-    const apiUrl = 'https://valorant-api.com/v1/agents/bb2a4828-46eb-8cd1-e765-15848195d751';
+    var apiUrl = 'https://valorant-api.com/v1/agents/${widget.uuid}';
 
     final response = await http.get(Uri.parse(apiUrl));
     final data = json.decode(response.body);
