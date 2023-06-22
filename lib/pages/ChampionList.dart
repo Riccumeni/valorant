@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:valorant/pages/ChampionDetail.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 
 class ChampionList extends StatefulWidget {
@@ -53,62 +54,58 @@ class _ChampionListState extends State<ChampionList> {
         ),
       ),
 
-      body: Container(
-        child: FutureBuilder(
-          future: _champs,
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if(snapshot.hasData){
-              Map<String, dynamic> champsRes = snapshot.data;
-              for(int i = 0; i< champsRes["data"].length; i++){
-                if(champsRes["data"][i]["isPlayableCharacter"] == false){
-                  champsRes["data"].remove(champsRes["data"][i]);
-                }
+      body: FutureBuilder(
+        future: _champs,
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if(snapshot.hasData){
+            Map<String, dynamic> champsRes = snapshot.data;
+            for(int i = 0; i< champsRes["data"].length; i++){
+              if(champsRes["data"][i]["isPlayableCharacter"] == false){
+                champsRes["data"].remove(champsRes["data"][i]);
               }
-              return GridView.builder(
-                itemCount: champsRes["data"].length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisExtent: 230,
-                  mainAxisSpacing: 40
-                ),
-                itemBuilder: (_, index){
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ChampionDetail(uuid: champsRes["data"][index]["uuid"]),
-                        ),
-                      );
-                    },
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      fit: StackFit.passthrough,
-                      children: [
-                        SvgPicture.asset('assets/champ-container.svg', width: 160, height: 130, color: Color(int.parse("0xFF${champsRes["data"][index]["backgroundGradientColors"][1].toString().substring(0, 6)}")),),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                                child: Image(
-                                    image: NetworkImage(champsRes["data"][index]["bustPortrait"])
-                                )
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(bottom: 20),
-                                child: Text("${champsRes["data"][index]["displayName"]}".toUpperCase(), style: TextStyle(color: Color.fromARGB(255, 30, 30, 30), fontFamily: 'monument', fontSize: 22),)
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                },
-              );
-            }else{
-              return Center(child: CircularProgressIndicator(),);
             }
-          },
-        ),
+            return GridView.builder(
+              itemCount: champsRes["data"].length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisExtent: 230,
+                mainAxisSpacing: 40
+              ),
+              itemBuilder: (_, index){
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ChampionDetail(champ: champsRes["data"][index]),
+                      ),
+                    );
+                  },
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    fit: StackFit.passthrough,
+                    children: [
+                      SvgPicture.asset('assets/champ-container.svg', width: 160, height: 130, color: Color(int.parse("0xFF${champsRes["data"][index]["backgroundGradientColors"][1].toString().substring(0, 6)}")),),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                              child: CachedNetworkImage(imageUrl: champsRes["data"][index]["bustPortrait"],)
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                              child: Text("${champsRes["data"][index]["displayName"]}".toUpperCase(), style: TextStyle(color: Color.fromARGB(255, 30, 30, 30), fontFamily: 'monument', fontSize: 22),)
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                );
+              },
+            );
+          }else{
+            return Center(child: CircularProgressIndicator(),);
+          }
+        },
       ),
     );
   }
