@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:valorant/pages/Maps.dart';
+import 'Weapons.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
+  const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,10 +12,9 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         toolbarHeight: 100,
-        leading: const Icon(Icons.arrow_back_ios_new),
         title: Center(
           child: Container(
-            margin: const EdgeInsets.only(top: 30, right: 60),
+            margin: const EdgeInsets.only(top: 30),
             child: SvgPicture.asset(
               "./assets/valorant-logo.svg",
               width: 70,
@@ -27,18 +26,20 @@ class HomePage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(left: 25),
-            margin: const EdgeInsets.only(left: 35, top: 20),
-            height: 180,
+            margin: const EdgeInsets.only(left: 20, top: 10),
+            padding: const EdgeInsets.only(left: 20),
+            width: 388.84,
+            height: 194.93,
             decoration: const BoxDecoration(
                 image: DecorationImage(
-              image: AssetImage("./assets/VectorRight.png"),
-            )),
+                    image: AssetImage("./assets/vectorRight.png"))),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    SizedBox(height: 35),
                     Text(
                       "AGENTS",
                       style: TextStyle(
@@ -48,7 +49,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Find more ways to plant the \nSpike and style on your \nenemies with scrappers,\nstrategists, and hunters \nof every description.',
+                      "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
                       style: TextStyle(
                         fontFamily: 'poppins',
                         fontSize: 10,
@@ -58,92 +59,111 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
                 Image.asset(
-                  "./assets/Agents.png",
+                  "./assets/agents.png",
                   height: 165,
                 )
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.only(left: 10),
-            margin: const EdgeInsets.only(right: 35, top: 20),
-            height: 180,
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("./assets/VectorLeft.png"),
-                )),
-            child: Row(
-              children: [
-
-                Image.asset(
-                  "./assets/IconMaps.png",
-                  height: 165,
-                ),
-                SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    SizedBox(height: 35),
-                    Text(
-                      "MAPS",
-                      style: TextStyle(
-                        fontFamily: 'monument',
-                        fontSize: 26,
-                        color: Colors.white,
+          GestureDetector(
+            child: Container(
+              padding: const EdgeInsets.only(left: 10),
+              margin: const EdgeInsets.only(right: 20, top: 20),
+              height: 194.93,
+              width: 388.84,
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                image: AssetImage("./assets/vectorLeft.png"),
+              )),
+              child: Row(
+                children: [
+                  Image.asset(
+                    "./assets/iconMaps.png",
+                    height: 165,
+                  ),
+                  const SizedBox(width: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      SizedBox(height: 45),
+                      Text(
+                        "MAPS",
+                        style: TextStyle(
+                          fontFamily: 'monument',
+                          fontSize: 26,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Find more ways to plant the \nSpike and style on your \nenemies with scrappers,\nstrategists, and hunters \nof every description.',
-                      style: TextStyle(
-                        fontFamily: 'poppins',
-                        fontSize: 10,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
-                ),
-              ],
+                      Text(
+                        'Find more ways to plant the \nSpike and style on your \nenemies with scrappers,\nstrategists, and hunters \nof every description.',
+                        style: TextStyle(
+                          fontFamily: 'poppins',
+                          fontSize: 10,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => MapsPage(),
+                ),
+              );
+            },
           ),
-          Container(
-            padding: const EdgeInsets.only(left: 25),
-            margin: const EdgeInsets.only(left: 35, top: 20),
-            height: 180,
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("./assets/VectorRight.png"),
-                )),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    SizedBox(height: 35),
-                    Text(
-                      "WEAPONS",
-                      style: TextStyle(
-                        fontFamily: 'monument',
-                        fontSize: 26,
-                        color: Colors.white,
+          GestureDetector(
+            child: Container(
+              padding: const EdgeInsets.only(left: 30),
+              margin: const EdgeInsets.only(left: 20, top: 20),
+              height: 194.93,
+              width: 388.84,
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                image: AssetImage("./assets/vectorRight.png"),
+              )),
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      SizedBox(height: 45),
+                      Text(
+                        "WEAPONS",
+                        style: TextStyle(
+                          fontFamily: 'monument',
+                          fontSize: 26,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Find more ways to plant the \nSpike and style on your \nenemies with scrappers,\nstrategists, and hunters \nof every description.',
-                      style: TextStyle(
-                        fontFamily: 'poppins',
-                        fontSize: 10,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(width: 10),
-                Image.asset(
-                  "./assets/IconWeapons.png",
-                  height: 125,
-                )
-              ],
+                      Text(
+                        "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
+                        style: TextStyle(
+                          fontFamily: 'poppins',
+                          fontSize: 10,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(width: 13),
+                  Image.asset(
+                    "./assets/iconWeapons.png",
+                    height: 125,
+                  ),
+                ],
+              ),
             ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const WeaponsPage(),
+                ),
+              );
+            },
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:valorant/pages/HomePage.dart';
 import 'package:valorant/pages/Maps.dart';
+import 'package:valorant/pages/Weapons.dart';
 
 Map<int, Color> color =
 {

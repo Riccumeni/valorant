@@ -1,27 +1,30 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:valorant/pages/MapDetail.dart';
 
-class MapsPage extends StatefulWidget {
-  const MapsPage({super.key});
+import 'WeaponsDetail.dart';
+import 'image.dart';
+
+class WeaponsPage extends StatefulWidget {
+  const WeaponsPage({super.key});
 
   @override
-  State<MapsPage> createState() => _MapsPageState();
+  State<WeaponsPage> createState() => _WeaponsPageState();
 }
 
-class _MapsPageState extends State<MapsPage> {
-  List _maps = [];
+class _WeaponsPageState extends State<WeaponsPage> {
+  List _weapons = [];
 
   Future<void> _fetchData() async {
-    const apiUrl = 'https://valorant-api.com/v1/maps';
+    const apiUrl = 'https://valorant-api.com/v1/weapons';
 
     final response = await http.get(Uri.parse(apiUrl));
     final data = json.decode(response.body);
 
     setState(() {
-      _maps = data["data"];
+      _weapons = data["data"];
     });
   }
 
@@ -56,30 +59,31 @@ class _MapsPageState extends State<MapsPage> {
         ),
       ),
       body: Container(
-        child: _maps.isEmpty
+        child: _weapons.isEmpty
             ? const Center(
-                child: Text("Is loading"),
+                child: Text("Is loading", style: TextStyle(color: Colors.white),),
               )
             : ListView.builder(
-                itemCount: _maps.length,
+                itemCount: _weapons.length,
                 itemBuilder: (BuildContext context, index) {
                   return InkWell(
                     child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 5),
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(left: 40),
+                        alignment: Alignment.bottomLeft,
+                        padding: const EdgeInsets.only(
+                            left: 40, bottom: 10, top: 20, right: 20),
                         width: MediaQuery.of(context).size.width,
-                        height: 140,
+                        height: 160,
                         decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 40, 40, 40),
                             image: DecorationImage(
-                                opacity: 0.7,
-                                fit: BoxFit.cover,
-                                // TODO: Scegliere listViewIcon (leggera ma peggiore) o splash (pesante ma migliore)
+                              alignment: const Alignment(0.8, 0),
+                                scale: 2.4,
                                 image: NetworkImage(
-                                  _maps[index]["listViewIcon"],
+                                  _weapons[index]["displayIcon"],
                                 ))),
                         child: Text(
-                          _maps[index]["displayName"].toUpperCase(),
+                          _weapons[index]["displayName"].toUpperCase(),
                           style: const TextStyle(
                             fontFamily: 'monument',
                             fontSize: 26,
@@ -87,12 +91,12 @@ class _MapsPageState extends State<MapsPage> {
                           ),
                         )),
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MapDetail(maps: _maps[index]),
-                        ),
-                      );
-                    },
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CarouselSliderExample(weapons: _weapons[index]),
+                    ),
+                  );
+                },
                   );
                 }),
       ),

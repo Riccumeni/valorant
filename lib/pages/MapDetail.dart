@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class MapDetail extends StatelessWidget {
   final Map maps;
 
   const MapDetail({Key? key, required this.maps}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     // Usa l'oggetto `maps` per visualizzare i dettagli delle mappe selezionate
@@ -14,6 +14,7 @@ class MapDetail extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 30, 30, 30),
         centerTitle: true,
+        elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -54,12 +55,15 @@ class MapDetail extends StatelessWidget {
                 ),
               ),
             ),
+
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  if( maps["coordinates"] != null)
                   const SizedBox(height: 30),
+                  if( maps["coordinates"] != null)
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -72,10 +76,11 @@ class MapDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
+                  if( maps["coordinates"] != null)
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      maps["coordinates"],
+                      maps["coordinates"].toString(),
                       style: const TextStyle(
                         fontFamily: 'poppins',
                         fontSize: 16,
@@ -105,6 +110,7 @@ class MapDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 30),
+                  if (maps["displayIcon"] != null)
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -117,6 +123,7 @@ class MapDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  if (maps["displayIcon"] != null)
                   Transform(
                     alignment: Alignment.center,
                     transform: Matrix4.rotationZ(
