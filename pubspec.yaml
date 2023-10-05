@@ -39,6 +39,8 @@ dependencies:
   http: ^0.13.5
   flutter_svg: ^1.1.6
   cached_network_image: ^3.2.3
+  carousel_slider: ^4.0.0
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,11 @@ flutter:
   assets:
     - assets/valorant-logo.svg
     - assets/champ-container.svg
+    - assets/vectorRight.png
+    - assets/vectorLeft.png
+    - assets/agents.png
+    - assets/iconMaps.png
+    - assets/iconWeapons.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
