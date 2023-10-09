@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:valorant/pages/MapDetail.dart';
+import 'package:valorant/ui/pages/MapDetail.dart';
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
