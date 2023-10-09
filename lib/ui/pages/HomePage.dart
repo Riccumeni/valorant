@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:valorant/pages/ChampionList.dart';
-import 'package:valorant/pages/Maps.dart';
+import 'package:valorant/business_logic/bloc/champion/champions_cubit.dart';
+import 'package:valorant/ui/pages/ChampionList.dart';
+import 'package:valorant/ui/pages/Maps.dart';
 import 'Weapons.dart';
 
 class HomePage extends StatelessWidget {
@@ -70,7 +72,7 @@ class HomePage extends StatelessWidget {
             onTap: (){
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const ChampionList(),
+                  builder: (context) => BlocProvider.value(child: ChampionList(),value: ChampionsCubit(),),
                 ),
               );
             },

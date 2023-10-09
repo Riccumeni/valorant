@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:valorant/pages/HomePage.dart';
-import 'package:valorant/pages/Maps.dart';
-import 'package:valorant/pages/Weapons.dart';
+import 'package:valorant/ui/pages/HomePage.dart';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(30, 30, 30, .1),
