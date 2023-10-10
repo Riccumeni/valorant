@@ -19,6 +19,7 @@ class _ChampionListState extends State<ChampionList> {
   final category = <String>[];
 
   var selected = "";
+  var text = "";
 
   @override
   void initState() {
@@ -74,13 +75,16 @@ class _ChampionListState extends State<ChampionList> {
                       width: 200,
                       child: TextField(
                         controller: _controller,
-                        onSubmitted: (String value){
+                        onChanged: (String value){
+                          setState(() {
+                            text = value;
+                          });
                           BlocProvider.of<ChampionsCubit>(context).getChampions(text: value, category: selected);
                         },
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white),),
-                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white),),
+                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey),),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey),),
                           hintStyle: TextStyle(color: Colors.white70),
                           hintText: 'Type here...',
                         ),
@@ -100,7 +104,7 @@ class _ChampionListState extends State<ChampionList> {
                       onChanged: (value){
                         setState(() {
                           selected = value!;
-                          BlocProvider.of<ChampionsCubit>(context).getChampions(category: value);
+                          BlocProvider.of<ChampionsCubit>(context).getChampions(text: text, category: value);
                         });
                       }
                   )
@@ -191,9 +195,7 @@ class _ChampionListState extends State<ChampionList> {
               ),
             ),
           ],
-        ));
+        )
+    );
   }
-
-  /*
-  */
 }

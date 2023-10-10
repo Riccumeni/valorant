@@ -9,21 +9,26 @@ class ChampionsCubit extends Cubit<ChampionsState> {
 
   ValorantRepository repository = ValorantRepository();
 
+  List<Champion> response = [];
+
   Future<void> getChampions({text, category}) async {
 
     emit(LoadingChampionsState());
 
-    if(category == "all"){
-      category = null;
-    }
-
     try{
-      var championsResponse = await repository.getChampions();
+      ChampionsResponse championsResponse;
+
+      if(response.isEmpty){
+        championsResponse = await repository.getChampions();
+        response = championsResponse.data!;
+      }else{
+        championsResponse = ChampionsResponse(status: 200, data: response);
+      }
 
       if(text != null || category != null){
         var newChampionResponse = [];
         championsResponse.data!.forEach((champion){
-          if(champion.role?.displayName.toLowerCase() == category.toString().toLowerCase()){
+          if((champion.role?.displayName.toLowerCase() == category.toString().toLowerCase()) || category.toString().toLowerCase() == "all"){
             if(text != null){
               RegExp pattern = RegExp("^$text");
               if(pattern.hasMatch(champion.displayName?.toLowerCase() ?? "")){
@@ -36,7 +41,6 @@ class ChampionsCubit extends Cubit<ChampionsState> {
         });
         championsResponse.data = newChampionResponse.cast<Champion>();
       }
-
       emit(SuccessChampionsState(championsResponse: championsResponse));
     }catch(e){
       emit(ErrorChampionsState());
