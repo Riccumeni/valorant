@@ -1,11 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
 
-class MapDetail extends StatelessWidget {
-  final Map maps;
+import 'package:valorant/data/models/map/MapsResponse.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
+class MapDetail extends StatefulWidget {
+  final Maps maps;
   const MapDetail({Key? key, required this.maps}) : super(key: key);
+
+  @override
+  State<MapDetail> createState() => _MapDetailState();
+}
+
+class _MapDetailState extends State<MapDetail> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Usa l'oggetto `maps` per visualizzare i dettagli delle mappe selezionate
@@ -26,7 +39,7 @@ class MapDetail extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
-              maps["displayName"].toUpperCase(),
+              widget.maps.displayName.toUpperCase(),
               style: const TextStyle(
                 fontFamily: 'monument',
                 fontSize: 28,
@@ -48,7 +61,7 @@ class MapDetail extends StatelessWidget {
               child: SizedBox.fromSize(
                 size: const Size.fromRadius(200), // Image radius
                 child: Image.network(
-                  maps["splash"],
+                  widget.maps.splash,
                   width: MediaQuery.of(context).size.width,
                   height: 420,
                   fit: BoxFit.cover,
@@ -61,9 +74,9 @@ class MapDetail extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if( maps["coordinates"] != null)
+                  if( widget.maps.coordinates != null)
                   const SizedBox(height: 30),
-                  if( maps["coordinates"] != null)
+                  if( widget.maps.coordinates != null)
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -76,11 +89,11 @@ class MapDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  if( maps["coordinates"] != null)
+                  if( widget.maps.coordinates != null)
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      maps["coordinates"].toString(),
+                      widget.maps.coordinates.toString(),
                       style: const TextStyle(
                         fontFamily: 'poppins',
                         fontSize: 16,
@@ -110,7 +123,7 @@ class MapDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  if (maps["displayIcon"] != null)
+                  if (widget.maps.displayIcon != null)
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -123,14 +136,14 @@ class MapDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (maps["displayIcon"] != null)
+                  if (widget.maps.displayIcon != null)
                   Transform(
                     alignment: Alignment.center,
                     transform: Matrix4.rotationZ(
                       6.27 / 4,
                     ),
                     child: Image.network(
-                      maps["displayIcon"],
+                      widget.maps.displayIcon,
                       width: 340,
                       height: 340,
                       fit: BoxFit.cover,
