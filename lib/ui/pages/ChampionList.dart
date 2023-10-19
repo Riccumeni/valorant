@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/champion/champions_cubit.dart';
 import 'package:valorant/ui/pages/ChampionDetail.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -49,8 +50,9 @@ class _ChampionListState extends State<ChampionList> {
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 30, 30, 30),
         appBar: AppBar(
-          toolbarHeight: 100,
-          leading: InkWell(child: Icon(Icons.arrow_back_ios_new), onTap: () => Navigator.of(context).pop(),),
+          toolbarHeight: 70,
+          backgroundColor: const Color.fromARGB(255, 38, 38, 38),
+          leading: InkWell(child: Icon(Icons.arrow_back_ios_new), onTap: () => context.go('/'),),
           title: Center(
             child: Container(
               margin: const EdgeInsets.only(top: 30, right: 60),
@@ -124,12 +126,8 @@ class _ChampionListState extends State<ChampionList> {
                       itemBuilder: (_, index) {
                         return InkWell(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ChampionDetail(
-                                    champ: state.championsResponse!.data![index]),
-                              ),
-                            );
+                            BlocProvider.of<ChampionsCubit>(context).setChampion(state.championsResponse!.data![index]);
+                            context.go('/champion-detail');
                           },
                           child: Stack(
                             alignment: Alignment.topCenter,

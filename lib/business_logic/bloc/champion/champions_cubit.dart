@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:valorant/data/models/champion/ChampionsResponse.dart';
-import 'package:valorant/data/repositories/ValorantRepository.dart';
+import 'package:valorant/data/repositories/ChampionRepository.dart';
 
 part 'champions_state.dart';
 
@@ -10,6 +10,8 @@ class ChampionsCubit extends Cubit<ChampionsState> {
   ValorantRepository repository = ValorantRepository();
 
   List<Champion> response = [];
+
+  late Champion champ;
 
   Future<void> getChampions({text, category}) async {
 
@@ -45,5 +47,20 @@ class ChampionsCubit extends Cubit<ChampionsState> {
     }catch(e){
       emit(ErrorChampionsState());
     }
+  }
+
+  Future<void> getChampion(String id) async {
+    emit(LoadingChampionsState());
+
+    try{
+      ChampionResponse response = await repository.getChampion(id);
+      emit(SuccessChampionState(championResponse: response));
+    }catch(e){
+      emit(ErrorChampionsState());
+    }
+  }
+
+  void setChampion(Champion tappedChamp){
+    champ = tappedChamp;
   }
 }

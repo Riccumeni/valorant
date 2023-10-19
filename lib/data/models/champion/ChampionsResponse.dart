@@ -16,6 +16,22 @@ class ChampionsResponse {
   }
 }
 
+class ChampionResponse {
+  int? status;
+  Champion? data;
+
+  ChampionResponse({required this.status, required this.data});
+
+  factory ChampionResponse.fromJson(Map<String, dynamic> json) {
+    final status = json['status'];
+    Champion? data;
+    if (json['data'] != null) {
+      data = Champion.fromJson(json['data']);
+    }
+    return ChampionResponse(status: status, data: data);
+  }
+}
+
 class Champion {
   String? uuid;
   String? displayName;

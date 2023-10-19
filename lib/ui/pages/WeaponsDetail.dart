@@ -1,21 +1,27 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:valorant/business_logic/bloc/favourite/favourite_cubit.dart';
+import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
+import 'package:valorant/data/models/weapons/WeaponsResponse.dart';
 
-class CarouselSliderExample extends StatefulWidget {
-  final Map weapons;
+class WeaponDetail extends StatefulWidget {
 
-  const CarouselSliderExample({Key? key, required this.weapons})
-      : super(key: key);
+  const WeaponDetail({Key? key}) : super(key: key);
 
   @override
-  _CarouselSliderExampleState createState() => _CarouselSliderExampleState();
+  _WeaponDetailState createState() => _WeaponDetailState();
 }
 
-class _CarouselSliderExampleState extends State<CarouselSliderExample> {
+class _WeaponDetailState extends State<WeaponDetail> {
   int currentIndex = 0;
   bool isRunning = true;
   String state = 'Animation start';
+
+  late Weapon weapon;
 
   void cycleImages(int index, CarouselPageChangedReason reason) {
     setState(() {
@@ -24,31 +30,34 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    weapon = BlocProvider.of<WeaponCubit>(context).weapon;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<dynamic> skins = widget.weapons["skins"];
-    skins.removeWhere((skin) =>
-        skin["displayName"] == "Random Favorite Skin" ||
-        skin["displayName"] == "Standard ${widget.weapons["displayName"]}");
+    List<Skins>? skins = weapon.skins;
+    skins?.removeWhere((skin) =>
+        skin.displayName == "Random Favorite Skin" ||
+        skin.displayName == "Standard ${weapon.displayName}");
 
     bool isDisplayNamePresent = false;
 
-    for (var skin in skins) {
-      if (skin["displayName"] == widget.weapons["displayName"]) {
+    for (var skin in skins!) {
+      if (skin.displayName == weapon.displayName) {
         isDisplayNamePresent = true;
       }
     }
 
     if (!isDisplayNamePresent) {
-      skins.insert(
-        0,
-        {
-          "displayName": widget.weapons["displayName"],
-        },
-      );
+      skins.insert(0, Skins(displayName: weapon.displayName));
     }
-    bool range1 = widget.weapons["weaponStats"]?["damageRanges"].length == 1;
-    bool range2 = widget.weapons["weaponStats"]?["damageRanges"].length == 2;
-    bool range3 = widget.weapons["weaponStats"]?["damageRanges"].length == 3;
+
+    bool range1 = weapon.weaponStats?.damageRanges?.length == 1;
+    bool range2 = weapon.weaponStats?.damageRanges?.length == 2;
+    bool range3 = weapon.weaponStats?.damageRanges?.length == 3;
 
     double percent(double ValoreAttuale, double ValoreMax) {
       double x = (ValoreAttuale * 100) / ValoreMax;
@@ -58,21 +67,21 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 30, 30, 30),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            context.go('/weapons');
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
-        toolbarHeight: 100,
+        toolbarHeight: 64,
+        backgroundColor: const Color.fromARGB(255, 38, 38, 38),
         title: Center(
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
-              widget.weapons["displayName"].toUpperCase(),
+              weapon.displayName?.toUpperCase() ?? "",
               style: const TextStyle(
                 fontFamily: 'monument',
                 fontSize: 28,
@@ -93,7 +102,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
-                          skin["displayIcon"] ?? widget.weapons["displayIcon"]),
+                          skin.displayIcon ?? weapon.displayIcon),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -103,14 +112,49 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                       width: double.maxFinite,
                       child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: Text(
-                          skin["displayName"].toUpperCase(),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontFamily: 'monument',
-                              fontSize: 16,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              skin.displayName?.toUpperCase() ?? "",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontFamily: 'monument',
+                                  fontSize: 16,
+                                  color: Colors.white),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
 
-                              color: Colors.white),
+                            InkWell(
+                              child: Icon(
+                                skin.isFavourite ? Icons.favorite_outlined : Icons.favorite_border ,
+                                color: skin.isFavourite ? Colors.red : Colors.grey,
+                              ),
+                              onTap: () {
+                                BlocProvider.of<FavouriteCubit>(context)
+                                    .setPreference(skin.uuid ?? "");
+
+                                setState(() async {
+                                  final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  List<String> favs = prefs.getStringList("favs") ?? [];
+
+                                  for (var fav in favs) {
+                                    if (fav == skin.uuid) {
+                                      setState(() {
+                                        skin.isFavourite = true;
+                                      });
+                                    }else{
+                                      setState(() {
+                                        skin.isFavourite = false;
+                                      });
+                                    }
+                                  }
+                                });
+                              },
+                            )
+                          ],
                         ),
                       ),
                     ),
@@ -128,7 +172,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
               ),
             ),
             const SizedBox(height: 50),
-            if (widget.weapons["shopData"]?["category"] != null)
+            if (weapon.shopData?.category != null)
               const Text(
                 "INFORMATION",
                 style: TextStyle(
@@ -146,7 +190,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (widget.weapons["shopData"]?["category"] != null)
+                      if (weapon.shopData?.category != null)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -165,7 +209,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                widget.weapons["shopData"]?["category"],
+                                weapon.shopData?.category ?? "",
                                 style: const TextStyle(
                                   fontFamily: 'poppins',
                                   fontSize: 16,
@@ -176,7 +220,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                           ],
                         ),
                       const SizedBox(width: 55),
-                      if (widget.weapons["shopData"]?["cost"] != null)
+                      if (weapon.shopData?.cost != null)
                         Column(
                           children: [
                             Row(
@@ -190,7 +234,8 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                   ),
                                 ),
                                 Text(
-                                  widget.weapons["shopData"]["cost"].toString(),
+                                  weapon.shopData?.cost.toString() ??
+                                      "",
                                   style: const TextStyle(
                                     fontFamily: 'monument',
                                     fontSize: 24,
@@ -250,7 +295,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                   Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        "${widget.weapons["weaponStats"]["damageRanges"][0]["rangeStartMeters"]}-${widget.weapons["weaponStats"]["damageRanges"][0]["rangeEndMeters"]}m",
+                                        "${weapon.weaponStats?.damageRanges?[0].rangeStartMeters}-${weapon.weaponStats?.damageRanges?[0].rangeEndMeters}m",
                                         style: const TextStyle(
                                           fontFamily: 'monument',
                                           fontSize: 16,
@@ -260,7 +305,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range2 || range3)
                                   Text(
-                                    "${widget.weapons["weaponStats"]["damageRanges"][1]["rangeStartMeters"]}-${widget.weapons["weaponStats"]["damageRanges"][1]["rangeEndMeters"]}m",
+                                    "${weapon.weaponStats?.damageRanges?[0].rangeStartMeters}-${weapon.weaponStats?.damageRanges?[0].rangeEndMeters}m",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -270,7 +315,7 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range3)
                                   Text(
-                                    "${widget.weapons["weaponStats"]["damageRanges"][2]["rangeStartMeters"]}-${widget.weapons["weaponStats"]["damageRanges"][2]["rangeEndMeters"]}m",
+                                    "${weapon.weaponStats?.damageRanges?[0].rangeStartMeters}-${weapon.weaponStats?.damageRanges?[0].rangeEndMeters}m",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -301,7 +346,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      widget.weapons["weaponStats"]["damageRanges"][0]["headDamage"].round().toString(),
+                                      weapon.weaponStats
+                                              ?.damageRanges?[0].headDamage
+                                              .round()
+                                              .toString() ??
+                                          "",
                                       style: const TextStyle(
                                         fontFamily: 'monument',
                                         fontSize: 16,
@@ -312,10 +361,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range2 || range3)
                                   Text(
-                                    widget.weapons["weaponStats"]
-                                            ["damageRanges"][1]["headDamage"]
-                                        .round()
-                                        .toString(),
+                                    weapon.weaponStats?.damageRanges?[1]
+                                            .headDamage
+                                            .round()
+                                            .toString() ??
+                                        "",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -325,10 +375,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range3)
                                   Text(
-                                    widget.weapons["weaponStats"]
-                                            ["damageRanges"][2]["headDamage"]
-                                        .round()
-                                        .toString(),
+                                    weapon.weaponStats?.damageRanges?[2]
+                                            .headDamage
+                                            .round()
+                                            .toString() ??
+                                        "",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -359,10 +410,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      widget.weapons["weaponStats"]
-                                              ["damageRanges"][0]["bodyDamage"]
-                                          .round()
-                                          .toString(),
+                                      weapon.weaponStats
+                                              ?.damageRanges?[0].bodyDamage
+                                              .round()
+                                              .toString() ??
+                                          "",
                                       style: const TextStyle(
                                         fontFamily: 'monument',
                                         fontSize: 16,
@@ -373,10 +425,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range2 || range3)
                                   Text(
-                                    widget.weapons["weaponStats"]
-                                            ["damageRanges"][1]["bodyDamage"]
-                                        .round()
-                                        .toString(),
+                                    weapon.weaponStats?.damageRanges?[1]
+                                            .bodyDamage
+                                            .round()
+                                            .toString() ??
+                                        "",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -386,10 +439,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range3)
                                   Text(
-                                    widget.weapons["weaponStats"]
-                                            ["damageRanges"][2]["bodyDamage"]
-                                        .round()
-                                        .toString(),
+                                    weapon.weaponStats?.damageRanges?[2]
+                                            .bodyDamage
+                                            .round()
+                                            .toString() ??
+                                        "",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -420,10 +474,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      widget.weapons["weaponStats"]
-                                              ["damageRanges"][0]["legDamage"]
-                                          .round()
-                                          .toString(),
+                                      weapon.weaponStats
+                                              ?.damageRanges?[0].legDamage
+                                              .round()
+                                              .toString() ??
+                                          "",
                                       style: const TextStyle(
                                         fontFamily: 'monument',
                                         fontSize: 16,
@@ -434,10 +489,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range2 || range3)
                                   Text(
-                                    widget.weapons["weaponStats"]
-                                            ["damageRanges"][1]["legDamage"]
-                                        .round()
-                                        .toString(),
+                                    weapon.weaponStats?.damageRanges?[1]
+                                            .legDamage
+                                            .round()
+                                            .toString() ??
+                                        "",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -447,10 +503,11 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 const SizedBox(height: 15),
                                 if (range3)
                                   Text(
-                                    widget.weapons["weaponStats"]
-                                            ["damageRanges"][2]["legDamage"]
-                                        .round()
-                                        .toString(),
+                                    weapon.weaponStats?.damageRanges?[2]
+                                            .legDamage
+                                            .round()
+                                            .toString() ??
+                                        "",
                                     style: const TextStyle(
                                       fontFamily: 'monument',
                                       fontSize: 16,
@@ -488,8 +545,9 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                               ),
                             ),
                             Text(
-                              widget.weapons["weaponStats"]["reloadTimeSeconds"]
-                                  .toString(),
+                              weapon.weaponStats?.reloadTimeSeconds
+                                      .toString() ??
+                                  "",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'poppins',
@@ -505,16 +563,18 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                           backgroundColor: Colors.grey,
                           lineHeight: 15,
                           center: Text(
-                              widget.weapons["weaponStats"]["reloadTimeSeconds"]
-                                  .toString(),
+                              weapon.weaponStats?.reloadTimeSeconds
+                                      .toString() ??
+                                  "",
                               style: const TextStyle(fontSize: 11)),
                           progressColor: Colors.white,
                           barRadius: const Radius.circular(10),
                           percent: percent(
-                              double.parse(widget.weapons["weaponStats"]
-                              ["reloadTimeSeconds"]
-                                  .toString()),
-                              5.0) /
+                                  double.parse(weapon.weaponStats
+                                          ?.reloadTimeSeconds
+                                          .toString() ??
+                                      ""),
+                                  5.0) /
                               100,
                           animation: true,
                           animationDuration: 1000,
@@ -534,8 +594,9 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                               ),
                             ),
                             Text(
-                              widget.weapons["weaponStats"]["magazineSize"]
-                                  .toString(),
+                              weapon.weaponStats?.magazineSize
+                                      .toString() ??
+                                  "",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'poppins',
@@ -551,22 +612,23 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                           backgroundColor: Colors.grey,
                           lineHeight: 15,
                           center: Text(
-                              widget.weapons["weaponStats"]["magazineSize"]
-                                  .toString(),
+                              weapon.weaponStats?.magazineSize
+                                      .toString() ??
+                                  "",
                               style: const TextStyle(fontSize: 11)),
                           progressColor: Colors.white,
                           barRadius: const Radius.circular(10),
                           percent: percent(
-                              double.parse(widget.weapons["weaponStats"]
-                              ["magazineSize"]
-                                  .toString()),
-                              100.0) /
+                                  double.parse(weapon.weaponStats?.magazineSize
+                                          .toString() ??
+                                      ""),
+                                  100.0) /
                               100,
                           animation: true,
                           animationDuration: 1000,
                         ),
                         const SizedBox(height: 20),
-                        if (widget.weapons["weaponStats"]["adsStats"] != null)
+                        if (weapon.weaponStats?.adsStats != null)
                           Row(
                             children: [
                               const Align(
@@ -581,9 +643,10 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 ),
                               ),
                               Text(
-                                widget.weapons["weaponStats"]["adsStats"]
-                                        ["zoomMultiplier"]
-                                    .toString(),
+                                weapon.weaponStats?.adsStats
+                                        ?.zoomMultiplier
+                                        .toString() ??
+                                    "",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'poppins',
@@ -594,29 +657,31 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                             ],
                           ),
                         const SizedBox(height: 10),
-                        if (widget.weapons["weaponStats"]["adsStats"] != null)
+                        if (weapon.weaponStats?.adsStats != null)
                           LinearPercentIndicator(
                             padding: const EdgeInsets.all(0),
                             backgroundColor: Colors.grey,
                             lineHeight: 15,
                             center: Text(
-                                widget.weapons["weaponStats"]["adsStats"]
-                                        ["zoomMultiplier"]
-                                    .toString(),
+                                weapon.weaponStats?.adsStats
+                                        ?.zoomMultiplier
+                                        .toString() ??
+                                    "",
                                 style: const TextStyle(fontSize: 11)),
                             progressColor: Colors.white,
                             barRadius: const Radius.circular(10),
                             percent: percent(
-                                    double.parse(widget.weapons["weaponStats"]
-                                            ["adsStats"]["zoomMultiplier"]
-                                        .toString()),
+                                    double.parse(weapon.weaponStats
+                                            ?.adsStats?.zoomMultiplier
+                                            .toString() ??
+                                        ""),
                                     3.5) /
                                 100,
                             animation: true,
                             animationDuration: 1000,
                           ),
                         const SizedBox(height: 20),
-                        if (widget.weapons["weaponStats"]["adsStats"] != null)
+                        if (weapon.weaponStats?.adsStats != null)
                           Row(
                             children: [
                               const Align(
@@ -631,10 +696,10 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 ),
                               ),
                               Text(
-                                widget.weapons["weaponStats"]["adsStats"]
-                                        ["fireRate"]
-                                    .round()
-                                    .toString(),
+                                weapon.weaponStats?.adsStats?.fireRate
+                                        .round()
+                                        .toString() ??
+                                    "",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'poppins',
@@ -645,31 +710,32 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                             ],
                           ),
                         const SizedBox(height: 10),
-                        if (widget.weapons["weaponStats"]["adsStats"] != null)
+                        if (weapon.weaponStats?.adsStats != null)
                           LinearPercentIndicator(
                             padding: const EdgeInsets.all(0),
                             backgroundColor: Colors.grey,
                             lineHeight: 15,
                             center: Text(
-                                widget.weapons["weaponStats"]["adsStats"]
-                                        ["fireRate"]
-                                    .round()
-                                    .toString(),
+                                weapon.weaponStats?.adsStats?.fireRate
+                                        .round()
+                                        .toString() ??
+                                    "",
                                 style: const TextStyle(fontSize: 11)),
                             progressColor: Colors.white,
                             barRadius: const Radius.circular(10),
                             percent: percent(
-                                    double.parse(widget.weapons["weaponStats"]
-                                            ["adsStats"]["fireRate"]
-                                        .round()
-                                        .toString()),
+                                    double.parse(weapon.weaponStats
+                                            ?.adsStats?.fireRate
+                                            .round()
+                                            .toString() ??
+                                        ""),
                                     16.0) /
                                 100,
                             animation: true,
                             animationDuration: 1000,
                           ),
                         const SizedBox(height: 20),
-                        if (widget.weapons["weaponStats"]["adsStats"] != null)
+                        if (weapon.weaponStats?.adsStats != null)
                           Row(
                             children: [
                               const Align(
@@ -684,9 +750,9 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                                 ),
                               ),
                               Text(
-                                widget.weapons["weaponStats"]
-                                        ["firstBulletAccuracy"]
-                                    .toString(),
+                                weapon.weaponStats?.firstBulletAccuracy
+                                        .toString() ??
+                                    "",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'poppins',
@@ -697,28 +763,30 @@ class _CarouselSliderExampleState extends State<CarouselSliderExample> {
                             ],
                           ),
                         const SizedBox(height: 10),
-                        if (widget.weapons["weaponStats"]["adsStats"] != null)
+                        if (weapon.weaponStats?.adsStats != null)
                           LinearPercentIndicator(
                             padding: const EdgeInsets.all(0),
                             backgroundColor: Colors.grey,
                             lineHeight: 15,
                             center: Text(
-                                widget.weapons["weaponStats"]
-                                        ["firstBulletAccuracy"]
-                                    .toString(),
+                                weapon.weaponStats?.firstBulletAccuracy
+                                        .toString() ??
+                                    "",
                                 style: const TextStyle(fontSize: 11)),
                             progressColor: Colors.white,
                             barRadius: const Radius.circular(10),
                             percent: percent(
-                                    double.parse(widget.weapons["weaponStats"]
-                                            ["firstBulletAccuracy"]
-                                        .toString()),
+                                    double.parse(
+                                      weapon.weaponStats
+                                              ?.firstBulletAccuracy
+                                              .toString() ??
+                                          "",
+                                    ),
                                     5.0) /
                                 100,
                             animation: true,
                             animationDuration: 1000,
                           ),
-
                       ],
                     ),
                   const SizedBox(height: 25),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:valorant/ui/pages/BottomNavigator.dart';
 import 'package:valorant/ui/pages/HomePage.dart';
 
 Map<int, Color> color = {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: colorCustom,
       ),
-      home: const HomePage(),
+      home: const BottomNavigator(),
     );
   }
 }

@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:valorant/data/data_providers/ValorantAPI.dart';
-
 import '../models/champion/ChampionsResponse.dart';
 
 class ValorantRepository{
@@ -24,5 +21,13 @@ class ValorantRepository{
     championsResponse.data = champions;
 
     return championsResponse;
+  }
+
+  Future<ChampionResponse> getChampion(String id) async{
+    final String raw = await valorantAPI.getChampion(id);
+
+    final ChampionResponse championResponse = ChampionResponse.fromJson(jsonDecode(raw));
+
+    return championResponse;
   }
 }
