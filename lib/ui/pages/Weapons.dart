@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'WeaponsDetail.dart';
-import 'image.dart';
+import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
 
 class WeaponsPage extends StatefulWidget {
   const WeaponsPage({super.key});
@@ -15,23 +13,11 @@ class WeaponsPage extends StatefulWidget {
 }
 
 class _WeaponsPageState extends State<WeaponsPage> {
-  List _weapons = [];
-
-  Future<void> _fetchData() async {
-    const apiUrl = 'https://valorant-api.com/v1/weapons';
-
-    final response = await http.get(Uri.parse(apiUrl));
-    final data = json.decode(response.body);
-
-    setState(() {
-      _weapons = data["data"];
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    BlocProvider.of<WeaponCubit>(context).getWeapons();
   }
 
   @override
@@ -40,10 +26,11 @@ class _WeaponsPageState extends State<WeaponsPage> {
       backgroundColor: const Color.fromARGB(255, 30, 30, 30),
       appBar: AppBar(
         elevation: 0,
-        toolbarHeight: 100,
+        toolbarHeight: 70,
+        backgroundColor: const Color.fromARGB(255, 38, 38, 38),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            context.go('/');
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -58,13 +45,16 @@ class _WeaponsPageState extends State<WeaponsPage> {
           ),
         ),
       ),
-      body: Container(
-        child: _weapons.isEmpty
-            ? const Center(
-                child: Text("Is loading", style: TextStyle(color: Colors.white),),
-              )
-            : ListView.builder(
-                itemCount: _weapons.length,
+      body: BlocBuilder<WeaponCubit, WeaponState>(
+        builder: (context, state){
+          if(state is WeaponsLoading){
+            return const Center(child: CircularProgressIndicator(),);
+          } else if(state is WeaponsSuccess){
+
+            var weapons = state.response.data;
+
+            return ListView.builder(
+                itemCount: weapons?.length,
                 itemBuilder: (BuildContext context, index) {
                   return InkWell(
                     child: Container(
@@ -77,13 +67,13 @@ class _WeaponsPageState extends State<WeaponsPage> {
                         decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 40, 40, 40),
                             image: DecorationImage(
-                              alignment: const Alignment(0.8, 0),
+                                alignment: const Alignment(0.8, 0),
                                 scale: 2.4,
                                 image: NetworkImage(
-                                  _weapons[index]["displayIcon"],
+                                  weapons?[index].displayIcon ?? "",
                                 ))),
                         child: Text(
-                          _weapons[index]["displayName"].toUpperCase(),
+                          weapons![index].displayName!.toUpperCase(),
                           style: const TextStyle(
                             fontFamily: 'monument',
                             fontSize: 26,
@@ -91,15 +81,32 @@ class _WeaponsPageState extends State<WeaponsPage> {
                           ),
                         )),
                     onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CarouselSliderExample(weapons: _weapons[index]),
-                    ),
+                      BlocProvider.of<WeaponCubit>(context).setWeapon(weapons[index]);
+                      context.go('/weapon-detail');
+                    },
                   );
-                },
-                  );
-                }),
-      ),
+                });
+          } else{
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:  [
+                const Icon(Icons.dangerous_outlined, color: Color.fromARGB(255,235, 86, 91), size: 60,),
+                Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  child: const Text("Something was wrong, check your internet connection",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'monument',
+                        fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              ],
+            );
+          }
+
+        },
+      )
     );
   }
 }

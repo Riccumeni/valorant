@@ -11,4 +11,9 @@ class SuccessChampionsState extends ChampionsState{
   SuccessChampionsState({required this.championsResponse});
 }
 
+class SuccessChampionState extends ChampionsState{
+  ChampionResponse? championResponse;
+  SuccessChampionState({required this.championResponse});
+}
+
 class ErrorChampionsState extends ChampionsState{}
