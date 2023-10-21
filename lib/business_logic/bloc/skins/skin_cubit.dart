@@ -15,12 +15,70 @@ class SkinCubit extends Cubit<SkinState> {
 
   Future<void> getSkinsByFavourite() async {
     emit(SkinLoading());
-
     try{
       SkinResponse response = await repository.getWeaponsFilteredByPreferences();
       emit(SkinSuccess(skinResponse: response));
     }catch(e){
       emit(SkinError());
+    }
+  }
+
+  Future<void> getSkinsByWeapon(String name) async {
+    emit(SkinLoading());
+    try{
+      SkinResponse response = await repository.getWeaponsFilteredByName(name);
+      emit(SkinSuccess(skinResponse: response));
+    }catch(e){
+      emit(SkinError());
+    }
+  }
+
+  Future<void> setPreference(List<Skin> skins, String fav) async{
+    try{
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      List<String> favs = prefs.getStringList("favs") ?? [];
+
+      if(favs.isEmpty){
+        await prefs.setStringList("favs", <String>[fav]);
+        skins.forEach((element) {
+          if(element.uuid == fav) {
+            element.isFavourite = true;
+          }
+        });
+      }else{
+        bool isInFav = false;
+        var index = -1;
+        for (var element in favs) {
+          if(element == fav){
+            isInFav = true;
+
+            index = favs.indexOf(element);
+          }
+        }
+
+        if(isInFav){
+          favs.removeAt(index);
+          for (var skin in skins) {
+            if(skin.uuid == fav) {
+              skin.isFavourite = !skin.isFavourite;
+            }
+          }
+          await prefs.setStringList("favs", favs);
+          emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
+        }else{
+          favs.add(fav);
+          for (var skin in skins) {
+            if(skin.uuid == fav) {
+              skin.isFavourite = !skin.isFavourite;
+            }
+          }
+          await prefs.setStringList("favs", favs);
+          emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
+        }
+      }
+    }catch(e){
+      var err = e;
     }
   }
 

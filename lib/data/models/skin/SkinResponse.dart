@@ -34,6 +34,7 @@ class Skin {
   String? assetPath;
   List<Chromas>? chromas;
   List<Levels>? levels;
+  bool isFavourite = false;
 
   Skin(
       { required this.uuid,

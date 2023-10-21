@@ -31,4 +31,35 @@ class SkinRepository{
 
     return response;
   }
+
+  Future<SkinResponse> getWeaponsFilteredByName(String name) async {
+    final raw = await _api.getSkins();
+
+    final response = SkinResponse.fromJson(jsonDecode(raw));
+
+    List<Skin> filteredSkins = [];
+
+    response.data?.forEach((element) {
+      final regex = RegExp(name);
+      if(regex.hasMatch(element.displayName!)){
+        filteredSkins.add(element);
+      }
+    });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<String> favs = prefs.getStringList("favs") ?? [];
+
+    filteredSkins.forEach((element) {
+      for(String fav in favs){
+        if(fav == element.uuid){
+          element.isFavourite = !element.isFavourite;
+        }
+      }
+    });
+
+    response.data = filteredSkins;
+
+    return response;
+  }
 }

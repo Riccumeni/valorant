@@ -92,161 +92,167 @@ class _ChampionDetailState extends State<ChampionDetail> {
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-      body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              CustomPaint(
-                size: const Size(300, 300),
-                painter: PaintTriangle(
-                    backgroundColor: Color(int.parse(
-                        "0xFF${champ?.backgroundGradientColors?[1].toString().substring(0, 6)}")),
-                    screenWidth: MediaQuery.of(context).size.width),
-                child: Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: CachedNetworkImageProvider(
-                              champ?.background ?? ""),
-                        )),
-                    child: Image(
-                      image: CachedNetworkImageProvider(
-                          champ?.fullPortrait ?? ""),
+      body: WillPopScope(
+        onWillPop: () async{
+          context.go('/champions');
+          return false;
+        },
+        child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: [
+                CustomPaint(
+                  size: const Size(300, 300),
+                  painter: PaintTriangle(
+                      backgroundColor: Color(int.parse(
+                          "0xFF${champ?.backgroundGradientColors?[1].toString().substring(0, 6)}")),
+                      screenWidth: MediaQuery.of(context).size.width),
+                  child: Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                                champ?.background ?? ""),
+                          )),
+                      child: Image(
+                        image: CachedNetworkImageProvider(
+                            champ?.fullPortrait ?? ""),
+                      )),
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(top: 50, left: 30),
+                    child: Text(
+                      "Description".toUpperCase(),
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontFamily: 'monument'),
                     )),
-              ),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 50, left: 30),
-                  child: Text(
-                    "Description".toUpperCase(),
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontFamily: 'monument'),
-                  )),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.only(
-                    top: 20,
-                    left: 30,
-                    right: 30,
-                  ),
-                  child: Text(
-                    champ?.description ?? "",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontFamily: 'poppins'),
-                  )),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 50, left: 30),
-                  child: Text(
-                    (champ?.role?.displayName ?? "").toUpperCase(),
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontFamily: 'monument'),
-                  )),
-              Container(
-                margin: EdgeInsets.only(top: 20, right: 30, left: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        champ?.role?.description ?? "",
-                        textAlign: TextAlign.left,
-                        softWrap: true,
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                            fontFamily: 'poppins'),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.only(
+                      top: 20,
+                      left: 30,
+                      right: 30,
+                    ),
+                    child: Text(
+                      champ?.description ?? "",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontFamily: 'poppins'),
+                    )),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(top: 50, left: 30),
+                    child: Text(
+                      (champ?.role?.displayName ?? "").toUpperCase(),
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontFamily: 'monument'),
+                    )),
+                Container(
+                  margin: EdgeInsets.only(top: 20, right: 30, left: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          champ?.role?.description ?? "",
+                          textAlign: TextAlign.left,
+                          softWrap: true,
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontFamily: 'poppins'),
+                        ),
                       ),
-                    ),
-                    Image(
-                        width: 55,
-                        height: 55,
-                        image:
-                        NetworkImage(champ?.role?.displayIcon ?? ""))
-                  ],
+                      Image(
+                          width: 55,
+                          height: 55,
+                          image:
+                          NetworkImage(champ?.role?.displayIcon ?? ""))
+                    ],
+                  ),
                 ),
-              ),
-              Container(
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(top: 50, left: 30),
+                    child: Text(
+                      "abilities".toUpperCase(),
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontFamily: 'monument'),
+                    )),
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Ability(
+                        image_url: champ?.abilities?[0].displayIcon,
+                        keyAbility: "C",
+                        onClick: onAbilityPressed,
+                        actualKey: _key,
+                        color_icon: color_icons["C"],
+                      ),
+                      Ability(
+                        image_url: champ?.abilities?[1].displayIcon,
+                        keyAbility: "Q",
+                        onClick: onAbilityPressed,
+                        actualKey: _key,
+                        color_icon: color_icons["Q"],
+                      ),
+                      Ability(
+                        image_url: champ?.abilities?[2].displayIcon,
+                        keyAbility: "E",
+                        onClick: onAbilityPressed,
+                        actualKey: _key,
+                        color_icon: color_icons["E"],
+                      ),
+                      Ability(
+                        image_url: champ?.abilities?[3].displayIcon,
+                        keyAbility: "X",
+                        onClick: onAbilityPressed,
+                        actualKey: _key,
+                        color_icon: color_icons["X"],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 50, left: 30),
+                  margin: EdgeInsets.only(top: 20, left: 30),
                   child: Text(
-                    "abilities".toUpperCase(),
+                    displayName.toUpperCase(),
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         color: Colors.white,
                         fontFamily: 'monument'),
-                  )),
-              Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Ability(
-                      image_url: champ?.abilities?[0].displayIcon,
-                      keyAbility: "C",
-                      onClick: onAbilityPressed,
-                      actualKey: _key,
-                      color_icon: color_icons["C"],
-                    ),
-                    Ability(
-                      image_url: champ?.abilities?[1].displayIcon,
-                      keyAbility: "Q",
-                      onClick: onAbilityPressed,
-                      actualKey: _key,
-                      color_icon: color_icons["Q"],
-                    ),
-                    Ability(
-                      image_url: champ?.abilities?[2].displayIcon,
-                      keyAbility: "E",
-                      onClick: onAbilityPressed,
-                      actualKey: _key,
-                      color_icon: color_icons["E"],
-                    ),
-                    Ability(
-                      image_url: champ?.abilities?[3].displayIcon,
-                      keyAbility: "X",
-                      onClick: onAbilityPressed,
-                      actualKey: _key,
-                      color_icon: color_icons["X"],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(top: 20, left: 30),
-                child: Text(
-                  displayName.toUpperCase(),
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontFamily: 'monument'),
-                ),
-              ),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(
-                      top: 20, left: 30, right: 30, bottom: 30),
-                  child: Text(
-                    description ,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontFamily: 'poppins'),
-                  )),
-            ],
-          )),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(
+                        top: 20, left: 30, right: 30, bottom: 30),
+                    child: Text(
+                      description ,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontFamily: 'poppins'),
+                    )),
+              ],
+            )),
+      ),
     );
   }
 }

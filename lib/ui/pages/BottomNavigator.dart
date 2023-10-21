@@ -94,7 +94,7 @@ class _BottomNavigatorState extends State<BottomNavigator> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
-            label: 'Favourties',
+            label: 'Favourites',
           ),
         ],
         currentIndex: _selectedIndex,
