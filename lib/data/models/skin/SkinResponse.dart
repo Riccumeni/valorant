@@ -1,3 +1,5 @@
+import '../weapons/WeaponsResponse.dart';
+
 class SkinResponse {
   int? status;
   List<Skin>? data;
@@ -46,6 +48,7 @@ class Skin {
         this.assetPath,
         this.chromas,
         this.levels});
+
 
   factory Skin.fromJson(Map<String, dynamic> json) {
     final uuid = json['uuid'];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/ui/pages/BottomNavigator.dart';
 import 'package:valorant/ui/pages/HomePage.dart';
 
@@ -17,7 +18,7 @@ Map<int, Color> color = {
 
 MaterialColor colorCustom = MaterialColor(0x1E1E1E, color);
 
-void main() {
+void main()  {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }

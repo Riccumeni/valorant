@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
@@ -6,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/data/models/skin/SkinResponse.dart';
 import 'package:valorant/data/repositories/SkinRepository.dart';
 
+import '../../../data/models/weapons/WeaponsResponse.dart';
+
 part 'skin_state.dart';
 
 class SkinCubit extends Cubit<SkinState> {
@@ -13,36 +16,54 @@ class SkinCubit extends Cubit<SkinState> {
 
   SkinRepository repository = SkinRepository();
 
+
   Future<void> getSkinsByFavourite() async {
     emit(SkinLoading());
     try{
-      SkinResponse response = await repository.getWeaponsFilteredByPreferences();
-      emit(SkinSuccess(skinResponse: response));
+      // SkinResponse response = await repository.getWeaponsFilteredByPreferences();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      List<String> rawFavs = prefs.getStringList("favs") ?? [];
+      List<Skin> favs = [];
+
+      for(String rawFav in rawFavs){
+        favs.add(Skin.fromJson(jsonDecode(rawFav)));
+      }
+      emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: favs)));
     }catch(e){
       emit(SkinError());
     }
   }
 
-  Future<void> getSkinsByWeapon(String name) async {
+  Future<void> getSkinsByWeapon(List<Skins> skins) async {
+
     emit(SkinLoading());
     try{
-      SkinResponse response = await repository.getWeaponsFilteredByName(name);
-      emit(SkinSuccess(skinResponse: response));
+      List<Skin> newSkins = [];
+      for (var element in skins) {
+        newSkins.add(element.toSkin());
+      }
+      emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: newSkins)));
     }catch(e){
       emit(SkinError());
     }
   }
 
-  Future<void> setPreference(List<Skin> skins, String fav) async{
+  Future<void> setPreference(List<Skin> skins, Map<String, dynamic> fav) async{
     try{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      List<String> favs = prefs.getStringList("favs") ?? [];
+      List<String> rawFavs = prefs.getStringList("favs") ?? [];
+      List<Map<String, dynamic>> favs = [];
+
+      for(String rawFav in rawFavs){
+        favs.add(jsonDecode(rawFav));
+      }
 
       if(favs.isEmpty){
-        await prefs.setStringList("favs", <String>[fav]);
+        await prefs.setStringList("favs", <String>[jsonEncode(fav)]);
         skins.forEach((element) {
-          if(element.uuid == fav) {
+          if(element.uuid == fav['uuid']) {
             element.isFavourite = true;
           }
         });
@@ -50,9 +71,8 @@ class SkinCubit extends Cubit<SkinState> {
         bool isInFav = false;
         var index = -1;
         for (var element in favs) {
-          if(element == fav){
+          if(element['uuid'] == fav['uuid']){
             isInFav = true;
-
             index = favs.indexOf(element);
           }
         }
@@ -60,20 +80,28 @@ class SkinCubit extends Cubit<SkinState> {
         if(isInFav){
           favs.removeAt(index);
           for (var skin in skins) {
-            if(skin.uuid == fav) {
+            if(skin.uuid == fav['uuid']) {
               skin.isFavourite = !skin.isFavourite;
             }
           }
-          await prefs.setStringList("favs", favs);
+          rawFavs = [];
+          for(Map<String, dynamic> fav in favs){
+            rawFavs.add(jsonEncode(fav));
+          }
+          await prefs.setStringList("favs", rawFavs);
           emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
         }else{
           favs.add(fav);
           for (var skin in skins) {
-            if(skin.uuid == fav) {
+            if(skin.uuid == fav['uuid']) {
               skin.isFavourite = !skin.isFavourite;
             }
           }
-          await prefs.setStringList("favs", favs);
+          rawFavs = [];
+          for(Map<String, dynamic> fav in favs){
+            rawFavs.add(jsonEncode(fav));
+          }
+          await prefs.setStringList("favs", rawFavs);
           emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
         }
       }

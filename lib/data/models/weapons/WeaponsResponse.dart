@@ -1,3 +1,5 @@
+import '../skin/SkinResponse.dart';
+
 class WeaponsResponse {
   int? status;
   List<Weapon>? data;
@@ -285,15 +287,19 @@ class Skins {
     assetPath = json['assetPath'];
   }
 
+  Skin toSkin(){
+    return Skin(
+        uuid: uuid ?? "",
+        displayName: displayName,
+        displayIcon: displayIcon
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['uuid'] = this.uuid;
     data['displayName'] = this.displayName;
-    data['themeUuid'] = this.themeUuid;
-    data['contentTierUuid'] = this.contentTierUuid;
     data['displayIcon'] = this.displayIcon;
-    data['wallpaper'] = this.wallpaper;
-    data['assetPath'] = this.assetPath;
     return data;
   }
 }

@@ -32,18 +32,13 @@ class _WeaponDetailState extends State<WeaponDetail> {
   }
 
   @override
-  void initState() {
+  void initState()  {
     // TODO: implement initState
     super.initState();
     weapon = BlocProvider.of<WeaponCubit>(context).weapon;
-    BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(weapon.displayName);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     List<Skins>? skins = weapon.skins;
     skins?.removeWhere((skin) =>
-        skin.displayName == "Random Favorite Skin" ||
+    skin.displayName == "Random Favorite Skin" ||
         skin.displayName == "Standard ${weapon.displayName}");
 
     bool isDisplayNamePresent = false;
@@ -57,6 +52,12 @@ class _WeaponDetailState extends State<WeaponDetail> {
     if (!isDisplayNamePresent) {
       skins.insert(0, Skins(displayName: weapon.displayName));
     }
+    weapon.skins = skins;
+    BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(weapon.skins!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     bool range1 = weapon.weaponStats?.damageRanges?.length == 1;
     bool range2 = weapon.weaponStats?.damageRanges?.length == 2;
@@ -148,10 +149,9 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                             ? Colors.red
                                             : Colors.grey,
                                       ),
-                                      onTap: () {
-                                        BlocProvider.of<SkinCubit>(context)
-                                            .setPreference(
-                                            newSkins, skin.uuid ?? "");
+                                      onTap: () async {
+                                        bool isFavourite = skin.isFavourite;
+                                        BlocProvider.of<SkinCubit>(context).setPreference(newSkins, skin.toJson());
                                       },
                                     )
                                   ],

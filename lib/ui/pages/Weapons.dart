@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
 
 class WeaponsPage extends StatefulWidget {
@@ -52,6 +53,7 @@ class _WeaponsPageState extends State<WeaponsPage> {
         },
         child: BlocBuilder<WeaponCubit, WeaponState>(
           builder: (context, state){
+
             if(state is WeaponsLoading){
               return const Center(child: CircularProgressIndicator(),);
             } else if(state is WeaponsSuccess){
