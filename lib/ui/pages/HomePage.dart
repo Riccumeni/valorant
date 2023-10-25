@@ -73,7 +73,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               onTap: (){
-                context.go('/champions');
+                context.push('/champions');
               },
             ),
             GestureDetector(
@@ -169,7 +169,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                context.go('/weapons');
+                context.push('/weapons');
               },
             ),
           ],

@@ -35,7 +35,7 @@ class ChampionResponse {
 class Champion {
   String? uuid;
   String? displayName;
-  String background;
+  String? background;
   String? displayIcon;
   String description;
   String? fullPortrait;
@@ -49,7 +49,7 @@ class Champion {
       {this.uuid,
         this.displayName,
         this.displayIcon,
-        required this.background,
+        this.background,
         this.fullPortrait,
         required this.description,
         this.bustPortrait,

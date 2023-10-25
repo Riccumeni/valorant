@@ -20,7 +20,6 @@ class SkinCubit extends Cubit<SkinState> {
   Future<void> getSkinsByFavourite() async {
     emit(SkinLoading());
     try{
-      // SkinResponse response = await repository.getWeaponsFilteredByPreferences();
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       List<String> rawFavs = prefs.getStringList("favs") ?? [];
@@ -35,13 +34,33 @@ class SkinCubit extends Cubit<SkinState> {
     }
   }
 
-  Future<void> getSkinsByWeapon(List<Skins> skins) async {
+  Future<void> getSkinsByWeapon(List<Skin> skins) async {
 
     emit(SkinLoading());
     try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String> favsRaw = prefs.getStringList("favs") ?? [];
+      List<Map<String, dynamic>> favs = [];
+
+      for(String favRaw in favsRaw){
+        favs.add(jsonDecode(favRaw));
+      }
+
       List<Skin> newSkins = [];
       for (var element in skins) {
-        newSkins.add(element.toSkin());
+        if(favs.isNotEmpty){
+          for(Map<String, dynamic> fav in favs){
+            if(element.uuid == fav['uuid']){
+              element.isFavourite = true;
+            }else{
+              element.isFavourite = false;
+            }
+          }
+        }else{
+          element.isFavourite = false;
+        }
+
+        newSkins.add(element);
       }
       emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: newSkins)));
     }catch(e){
@@ -119,20 +138,26 @@ class SkinCubit extends Cubit<SkinState> {
 
       List<String> skinFavs = prefs.getStringList("favs") ?? [];
 
+      List<Map<String, dynamic>> favs = [];
+
+      skinFavs.forEach((element) {
+        favs.add(jsonDecode(element));
+      });
+
       bool isFound = false;
 
       int index = -1;
 
-      for (int i = 0; i < skinFavs.length; i++){
-        String skinFav = skinFavs[i];
-        if(uuid == skinFav){
+      for (int i = 0; i < favs.length; i++){
+        Map<String, dynamic> skinFav = favs[i];
+        if(uuid == skinFav['uuid']){
           index = i;
           // skinFavs.remove(skinFav);
         }
       }
 
       if(index != -1){
-        skinFavs.removeAt(index);
+        favs.removeAt(index);
       }
 
       index = -1;
@@ -145,7 +170,14 @@ class SkinCubit extends Cubit<SkinState> {
       }
 
       if(index != -1){
+        skins.data![index].isFavourite = !skins.data![index].isFavourite;
         skins.data!.removeAt(index);
+      }
+
+      skinFavs = [];
+
+      for(Map<String, dynamic> fav in favs){
+        skinFavs.add(jsonEncode(fav));
       }
 
       prefs.setStringList("favs", skinFavs);

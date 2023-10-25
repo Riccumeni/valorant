@@ -36,7 +36,7 @@ class Weapon {
   String? assetPath;
   WeaponStats? weaponStats;
   ShopData? shopData;
-  List<Skins>? skins;
+  List<Skin>? skins;
 
   Weapon(
       {this.uuid,
@@ -62,9 +62,9 @@ class Weapon {
         : null;
     var skins;
     if (json['skins'] != null) {
-      skins = <Skins>[];
+      skins = <Skin>[];
       json['skins'].forEach((v) {
-        skins!.add(new Skins.fromJson(v));
+        skins!.add(new Skin.fromJson(v));
       });
     }
     return Weapon(uuid: uuid, displayName: displayName, category: category, defaultSkinUuid: defaultSkinUuid, displayIcon: displayIcon, weaponStats: weaponStats, shopData: shopData, skins: skins);
@@ -255,7 +255,7 @@ class ShopData {
   }
 }
 
-
+/*
 class Skins {
   String? uuid;
   String? displayName;
@@ -303,3 +303,4 @@ class Skins {
     return data;
   }
 }
+*/

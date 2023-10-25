@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/champion/champions_cubit.dart';
-import 'package:valorant/ui/pages/ChampionDetail.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:valorant/ui/themes/Colors.dart';
 
 class ChampionList extends StatefulWidget {
   const ChampionList({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class ChampionList extends StatefulWidget {
 
 class _ChampionListState extends State<ChampionList> {
 
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   final category = <String>[];
 
@@ -48,11 +48,12 @@ class _ChampionListState extends State<ChampionList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+      resizeToAvoidBottomInset: false,
+        backgroundColor: ColorsTheme.background,
         appBar: AppBar(
           toolbarHeight: 70,
-          backgroundColor: const Color.fromARGB(255, 38, 38, 38),
-          leading: InkWell(child: Icon(Icons.arrow_back_ios_new), onTap: () => context.go('/'),),
+          backgroundColor: ColorsTheme.primary,
+          leading: InkWell(child: const Icon(Icons.arrow_back_ios_new), onTap: () => context.pop(),),
           title: Center(
             child: Container(
               margin: const EdgeInsets.only(top: 30, right: 60),
@@ -63,11 +64,11 @@ class _ChampionListState extends State<ChampionList> {
               ),
             ),
           ),
-        ),
+        )
+        ,
         body: WillPopScope(
           onWillPop: () async{
-            context.go('/');
-            return false;
+            return true;
           },
           child: Column(
             children: [
@@ -132,7 +133,7 @@ class _ChampionListState extends State<ChampionList> {
                           return InkWell(
                             onTap: () {
                               BlocProvider.of<ChampionsCubit>(context).setChampion(state.championsResponse!.data![index]);
-                              context.go('/champion-detail');
+                              context.push('/champion-detail');
                             },
                             child: Stack(
                               alignment: Alignment.topCenter,
@@ -143,22 +144,21 @@ class _ChampionListState extends State<ChampionList> {
                                   width: 160,
                                   height: 130,
                                   color: Color(int.parse(
-                                      "0xFF${state.championsResponse!.data![index]!.backgroundGradientColors![1].toString().substring(0, 6)}")),
+                                      "0xFF${state.championsResponse!.data![index].backgroundGradientColors![1].toString().substring(0, 6)}")),
                                 ),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
+                                    CachedNetworkImage(
+                                      imageUrl: state.championsResponse!.data![index].bustPortrait ?? "",
+                                    ),
                                     Container(
-                                        child: CachedNetworkImage(
-                                      imageUrl: state.championsResponse!.data![index]!.bustPortrait ?? "",
-                                    )),
-                                    Container(
-                                        margin: EdgeInsets.only(bottom: 20),
+                                        margin: const EdgeInsets.only(bottom: 20),
                                         child: Text(
-                                          "${state.championsResponse!.data![index]!.displayName}"
+                                          "${state.championsResponse!.data![index].displayName}"
                                               .toUpperCase(),
-                                          style: const TextStyle(
-                                              color: Color.fromARGB(255, 30, 30, 30),
+                                          style: TextStyle(
+                                              color: ColorsTheme.onPrimary,
                                               fontFamily: 'monument',
                                               fontSize: 22),
                                         )
@@ -180,7 +180,7 @@ class _ChampionListState extends State<ChampionList> {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children:  [
-                          const Icon(Icons.dangerous_outlined, color: Color.fromARGB(255,235, 86, 91), size: 60,),
+                          Icon(Icons.dangerous_outlined, color: ColorsTheme.valorant, size: 60,),
                           Container(
                             margin: const EdgeInsets.only(top: 20),
                             child: const Text("Something was wrong, check your internet connection",

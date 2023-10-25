@@ -14,22 +14,29 @@ class ChampionDetail extends StatefulWidget {
   State<ChampionDetail> createState() => _ChampionDetailState();
 }
 
-class _ChampionDetailState extends State<ChampionDetail> {
+class _ChampionDetailState extends State<ChampionDetail> with TickerProviderStateMixin{
+  late AnimationController animation;
+  late Animation<double> _fadeInFadeOut;
+
   String _key = "C";
+  String displayName = "";
+  String description = "";
+
   var color_icons = {
     "C": Colors.white,
     "Q": Colors.white.withOpacity(.5),
     "E": Colors.white.withOpacity(.5),
     "X": Colors.white.withOpacity(.5)
   };
+
   void onAbilityPressed(String newKey) {
     setState(() {
+      animation.forward();
       _key = newKey;
       color_icons["C"] = Colors.white.withOpacity(.5);
       color_icons["Q"] = Colors.white.withOpacity(.5);
       color_icons["E"] = Colors.white.withOpacity(.5);
       color_icons["X"] = Colors.white.withOpacity(.5);
-
       color_icons[_key] = Colors.white;
     });
   }
@@ -40,12 +47,6 @@ class _ChampionDetailState extends State<ChampionDetail> {
   void initState() {
     super.initState();
     champ = BlocProvider.of<ChampionsCubit>(context).champ;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String displayName = "";
-    String description = "";
 
     switch (_key) {
       case "C":
@@ -65,6 +66,44 @@ class _ChampionDetailState extends State<ChampionDetail> {
         description = champ.abilities?[3].description ?? "";
         break;
     }
+
+
+    animation = AnimationController(vsync: this, duration: Duration(milliseconds: 250),);
+    _fadeInFadeOut = Tween<double>(begin: 1.0, end: 0.0).animate(animation);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    animation.addStatusListener((status){
+      if(status == AnimationStatus.completed && _fadeInFadeOut.value == 0.0){
+        setState(() {
+          switch (_key) {
+            case "C":
+              displayName = champ.abilities?[0].displayName ?? "";
+              description = champ.abilities?[0].description ?? "";
+              break;
+            case "Q":
+              displayName = champ.abilities?[1].displayName ?? "";
+              description = champ.abilities?[1].description ?? "";
+              break;
+            case "E":
+              displayName = champ.abilities?[2].displayName ?? "";
+              description = champ.abilities?[2].description ?? "";
+              break;
+            case "X":
+              displayName = champ.abilities?[3].displayName ?? "";
+              description = champ.abilities?[3].description ?? "";
+              break;
+          }
+        });
+        animation.reverse();
+      }
+    });
+
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(int.parse(
@@ -73,7 +112,7 @@ class _ChampionDetailState extends State<ChampionDetail> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            context.go('/champions');
+            context.pop();
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -94,8 +133,8 @@ class _ChampionDetailState extends State<ChampionDetail> {
       backgroundColor: const Color.fromARGB(255, 30, 30, 30),
       body: WillPopScope(
         onWillPop: () async{
-          context.go('/champions');
-          return false;
+          //context.pop();
+          return true;
         },
         child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -105,22 +144,22 @@ class _ChampionDetailState extends State<ChampionDetail> {
                   size: const Size(300, 300),
                   painter: PaintTriangle(
                       backgroundColor: Color(int.parse(
-                          "0xFF${champ?.backgroundGradientColors?[1].toString().substring(0, 6)}")),
+                          "0xFF${champ.backgroundGradientColors?[1].toString().substring(0, 6)}")),
                       screenWidth: MediaQuery.of(context).size.width),
                   child: Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
                             image: CachedNetworkImageProvider(
-                                champ?.background ?? ""),
+                                champ.background ?? ""),
                           )),
                       child: Image(
                         image: CachedNetworkImageProvider(
-                            champ?.fullPortrait ?? ""),
+                            champ.fullPortrait ?? ""),
                       )),
                 ),
                 Container(
                     width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.only(top: 50, left: 30),
+                    margin: const EdgeInsets.only(top: 50, left: 30),
                     child: Text(
                       "Description".toUpperCase(),
                       textAlign: TextAlign.left,
@@ -137,35 +176,35 @@ class _ChampionDetailState extends State<ChampionDetail> {
                       right: 30,
                     ),
                     child: Text(
-                      champ?.description ?? "",
+                      champ.description,
                       textAlign: TextAlign.left,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white,
                           fontFamily: 'poppins'),
                     )),
                 Container(
                     width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.only(top: 50, left: 30),
+                    margin: const EdgeInsets.only(top: 50, left: 30),
                     child: Text(
-                      (champ?.role?.displayName ?? "").toUpperCase(),
+                      (champ.role?.displayName ?? "").toUpperCase(),
                       textAlign: TextAlign.left,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 24,
                           color: Colors.white,
                           fontFamily: 'monument'),
                     )),
                 Container(
-                  margin: EdgeInsets.only(top: 20, right: 30, left: 30),
+                  margin: const EdgeInsets.only(top: 20, right: 30, left: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
-                          champ?.role?.description ?? "",
+                          champ.role?.description ?? "",
                           textAlign: TextAlign.left,
                           softWrap: true,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 14,
                               color: Colors.white,
                               fontFamily: 'poppins'),
@@ -175,17 +214,17 @@ class _ChampionDetailState extends State<ChampionDetail> {
                           width: 55,
                           height: 55,
                           image:
-                          NetworkImage(champ?.role?.displayIcon ?? ""))
+                          NetworkImage(champ.role?.displayIcon ?? ""))
                     ],
                   ),
                 ),
                 Container(
                     width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.only(top: 50, left: 30),
+                    margin: const EdgeInsets.only(top: 50, left: 30),
                     child: Text(
                       "abilities".toUpperCase(),
                       textAlign: TextAlign.left,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 24,
                           color: Colors.white,
                           fontFamily: 'monument'),
@@ -196,28 +235,28 @@ class _ChampionDetailState extends State<ChampionDetail> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Ability(
-                        image_url: champ?.abilities?[0].displayIcon,
+                        image_url: champ.abilities?[0].displayIcon,
                         keyAbility: "C",
                         onClick: onAbilityPressed,
                         actualKey: _key,
                         color_icon: color_icons["C"],
                       ),
                       Ability(
-                        image_url: champ?.abilities?[1].displayIcon,
+                        image_url: champ.abilities?[1].displayIcon,
                         keyAbility: "Q",
                         onClick: onAbilityPressed,
                         actualKey: _key,
                         color_icon: color_icons["Q"],
                       ),
                       Ability(
-                        image_url: champ?.abilities?[2].displayIcon,
+                        image_url: champ.abilities?[2].displayIcon,
                         keyAbility: "E",
                         onClick: onAbilityPressed,
                         actualKey: _key,
                         color_icon: color_icons["E"],
                       ),
                       Ability(
-                        image_url: champ?.abilities?[3].displayIcon,
+                        image_url: champ.abilities?[3].displayIcon,
                         keyAbility: "X",
                         onClick: onAbilityPressed,
                         actualKey: _key,
@@ -226,32 +265,40 @@ class _ChampionDetailState extends State<ChampionDetail> {
                     ],
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 20, left: 30),
-                  child: Text(
-                    displayName.toUpperCase(),
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontFamily: 'monument'),
+                FadeTransition(
+                  opacity: _fadeInFadeOut,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(top: 20, left: 30),
+                    child: Text(
+                      displayName.toUpperCase(),
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontFamily: 'monument'),
+                    ),
                   ),
                 ),
                 Container(
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.only(
                         top: 20, left: 30, right: 30, bottom: 30),
-                    child: Text(
-                      description ,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                          fontFamily: 'poppins'),
-                    )),
+                    child: FadeTransition(
+                      opacity: _fadeInFadeOut,
+                      child: Text(
+                        description ,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontFamily: 'poppins'),
+                      )
+                    ),
+                )
               ],
-            )),
+            )
+        ),
       ),
     );
   }

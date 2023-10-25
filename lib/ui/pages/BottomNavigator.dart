@@ -31,11 +31,36 @@ class _BottomNavigatorState extends State<BottomNavigator> {
     GoRoute(path: '/', builder: (context, state) => const HomePage()),
     GoRoute(
         path: '/champions',
-        builder: (context, state) => ChampionList()
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+              key: state.pageKey,
+              child: ChampionList(),
+              transitionsBuilder: (context, animation, secondaryAnimation,
+                  child) {
+                return ScaleTransition(
+                  scale: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+                  child: child,
+                );
+              }
+          );
+        }
     ),
     GoRoute(
       path: '/champion-detail',
-      builder: (context, state) => ChampionDetail(),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+            key: state.pageKey,
+            child: ChampionDetail(),
+            transitionsBuilder: (context, animation, secondaryAnimation,
+                child) {
+              return ScaleTransition(
+                scale: CurveTween(curve: Curves.easeOutCirc).animate(
+                    animation),
+                child: child,
+              );
+            }
+        );
+      },
     ),
     GoRoute(
       path: '/weapons',
@@ -79,7 +104,6 @@ class _BottomNavigatorState extends State<BottomNavigator> {
           providers: [
             BlocProvider(create: (context) => ChampionsCubit()),
             BlocProvider(create: (context) => WeaponCubit()),
-            BlocProvider(create: (context) => FavouriteCubit()),
             BlocProvider(create: (context) => SkinCubit()),
           ],
           child: _widgetOptions.elementAt(_selectedIndex),

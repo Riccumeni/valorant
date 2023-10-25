@@ -35,9 +35,6 @@ class SkinRepository{
   Future<SkinResponse> getWeaponsFilteredByName(String name) async {
     final raw = await _api.getSkins();
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.clear();
-
     final response = SkinResponse.fromJson(jsonDecode(raw));
 
     List<Skin> filteredSkins = [];
