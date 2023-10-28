@@ -23,6 +23,12 @@ class SkinCubit extends Cubit<SkinState> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       List<String> rawFavs = prefs.getStringList("favs") ?? [];
+
+      if(rawFavs.length == 0){
+        emit(SkinEmpty());
+        return;
+      }
+
       List<Skin> favs = [];
 
       for(String rawFav in rawFavs){
@@ -81,11 +87,12 @@ class SkinCubit extends Cubit<SkinState> {
 
       if(favs.isEmpty){
         await prefs.setStringList("favs", <String>[jsonEncode(fav)]);
-        skins.forEach((element) {
+        for (Skin element in skins) {
           if(element.uuid == fav['uuid']) {
             element.isFavourite = true;
           }
-        });
+          emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
+        }
       }else{
         bool isInFav = false;
         var index = -1;
@@ -126,6 +133,7 @@ class SkinCubit extends Cubit<SkinState> {
       }
     }catch(e){
       var err = e;
+      emit(SkinError());
     }
   }
 
@@ -182,7 +190,13 @@ class SkinCubit extends Cubit<SkinState> {
 
       prefs.setStringList("favs", skinFavs);
 
-      emit(SkinSuccess(skinResponse: skins));
+      if(skinFavs.isEmpty){
+        emit(SkinEmpty());
+      }else{
+        emit(SkinSuccess(skinResponse: skins));
+      }
+
+
 
     }catch(e){
       emit(SkinError());

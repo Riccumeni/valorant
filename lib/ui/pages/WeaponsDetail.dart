@@ -63,8 +63,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
     bool range2 = weapon.weaponStats?.damageRanges?.length == 2;
     bool range3 = weapon.weaponStats?.damageRanges?.length == 3;
 
-    double percent(double ValoreAttuale, double ValoreMax) {
-      double x = (ValoreAttuale * 100) / ValoreMax;
+    double percent(double valoreAttuale, double valoreMax) {
+      double x = (valoreAttuale * 100) / valoreMax;
       return x;
     }
 
@@ -223,7 +223,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             ),
                           ],
                         ),
-                      const SizedBox(width: 55),
+
                       if (weapon.shopData?.cost != null)
                         Column(
                           children: [

@@ -44,7 +44,23 @@ class _FavouritePageState extends State<FavouritePage> {
             return const Center(
               child: CircularProgressIndicator(color: Color.fromARGB(255,235, 86, 91),),
             );
-          }else if(state is SkinSuccess){
+          }
+          else if(state is SkinEmpty){
+            return Center(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                child: const Text("The favorites list is empty, add some in the weapons section",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'monument',
+                      fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
+          else if(state is SkinSuccess){
             List<Skin> skins = state.skinResponse.data;
             return ListView.builder(
                 itemCount: skins.length,
