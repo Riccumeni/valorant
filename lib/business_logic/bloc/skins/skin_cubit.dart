@@ -32,11 +32,14 @@ class SkinCubit extends Cubit<SkinState> {
 
     try{
       SkinResponse response = await repository.getSkin(id);
+      skin = response.data!;
       emit(SkinSuccess(skinResponse: response));
     }catch(e){
       emit(SkinError());
     }
-  }void setSkin (Skin tappedSkin){
+  }
+
+  void setSkin (Skin tappedSkin){
     skin = tappedSkin;
   }
 

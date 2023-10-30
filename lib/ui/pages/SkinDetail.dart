@@ -1,10 +1,10 @@
 import 'package:appinio_video_player/appinio_video_player.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
+import 'package:valorant/data/models/skin/SkinResponse.dart';
 
 class SkinDetail extends StatefulWidget {
   String id;
@@ -15,17 +15,13 @@ class SkinDetail extends StatefulWidget {
 }
 
 class _SkinDetailState extends State<SkinDetail> {
-  late VideoPlayerController _videoPlayerController;
-  late CustomVideoPlayerController _customVideoPlayerController;
+  List<VideoPlayerController> _videoPlayerControllers = [];
+  List<CustomVideoPlayerController>? _customVideoPlayerControllers = [];
   late CustomVideoPlayerWebController _customVideoPlayerWebController;
 
   final CustomVideoPlayerSettings _customVideoPlayerSettings =
   const CustomVideoPlayerSettings(showSeekButtons: true);
 
-  final CustomVideoPlayerWebSettings _customVideoPlayerWebSettings =
-  CustomVideoPlayerWebSettings(
-    src: longVideo,
-  );
   int selectedChromaIndex = 0;
   int selectedLevelsIndex = 0;
 
@@ -43,20 +39,33 @@ class _SkinDetailState extends State<SkinDetail> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SkinCubit>(context).getSkin(widget.id);
-    _videoPlayerController = VideoPlayerController.network(
-      longVideo,
-    )..initialize().then((value) => setState(() {}));
-    _customVideoPlayerController = CustomVideoPlayerController(
-      context: context,
-      videoPlayerController: _videoPlayerController,
-      customVideoPlayerSettings: _customVideoPlayerSettings,
-    );
+    BlocProvider.of<SkinCubit>(context).getSkin(widget.id).then((value) => {
+
+      for(Levels level in BlocProvider.of<SkinCubit>(context).skin.levels!){
+        if(level.streamedVideo != null){
+          _videoPlayerControllers.add(VideoPlayerController.network(
+            level.streamedVideo!,
+          )..initialize().then((value) => setState(() {}))),
+        }
+      },
+
+      for(VideoPlayerController videoController in _videoPlayerControllers){
+        _customVideoPlayerControllers?.add(CustomVideoPlayerController(
+          context: context,
+          videoPlayerController: videoController,
+          customVideoPlayerSettings: _customVideoPlayerSettings,
+        ))
+      }
+
+    });
+
   }
 
   @override
   void dispose() {
-    _customVideoPlayerController.dispose();
+    for(CustomVideoPlayerController controller in _customVideoPlayerControllers!){
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -195,21 +204,17 @@ class _SkinDetailState extends State<SkinDetail> {
                               const SizedBox(
                                 height: 25,
                               ),
-                              for (int i = 0; i < skin.levels.length; i++)
+                              for (int i = 0; i < _videoPlayerControllers.length; i++)
                                 SizedBox(
                                   width: double.maxFinite,
                                   height: 330,
                                   child: Column(
                                     children: [
-                                      kIsWeb
-                                          ? CustomVideoPlayerWeb(
-                                        customVideoPlayerWebController:
-                                        _customVideoPlayerWebController,
-                                      )
-                                          : CustomVideoPlayer(
+                                      _customVideoPlayerControllers?[i] != null
+                                          ? CustomVideoPlayer(
                                         customVideoPlayerController:
-                                        _customVideoPlayerController,
-                                      ),
+                                        _customVideoPlayerControllers![i],
+                                      ) : Text(""),
                                       Container(
                                         margin: EdgeInsets.only(top: 30),
                                         child: Text(
@@ -241,6 +246,3 @@ class _SkinDetailState extends State<SkinDetail> {
     );
   }
 }
-
-String longVideo =
-    'https://valorant.dyn.riotcdn.net/x/videos/release-07.08/3580b17d-46b5-7ffd-1ff2-32984879baa5_default_universal.mp4';
