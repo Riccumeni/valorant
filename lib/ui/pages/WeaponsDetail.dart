@@ -7,9 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/business_logic/bloc/favourite/favourite_cubit.dart';
 import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
 import 'package:valorant/data/models/weapons/WeaponsResponse.dart';
+import '../../business_logic/bloc/skins/skin_cubit.dart';
+import '../../data/models/skin/SkinResponse.dart';
 
 class WeaponDetail extends StatefulWidget {
-
   const WeaponDetail({Key? key}) : super(key: key);
 
   @override
@@ -97,69 +98,102 @@ class _WeaponDetailState extends State<WeaponDetail> {
           children: [
             CarouselSlider(
               items: skins.map((skin) {
-                return Container(
-                  margin: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          skin.displayIcon ?? weapon.displayIcon),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 180),
-                    child: SizedBox(
-                      width: double.maxFinite,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              skin.displayName?.toUpperCase() ?? "",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontFamily: 'monument',
-                                  fontSize: 16,
-                                  color: Colors.white),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-
-                            InkWell(
-                              child: Icon(
-                                skin.isFavourite ? Icons.favorite_outlined : Icons.favorite_border ,
-                                color: skin.isFavourite ? Colors.red : Colors.grey,
-                              ),
-                              onTap: () {
-                                BlocProvider.of<FavouriteCubit>(context)
-                                    .setPreference(skin.uuid ?? "");
-
-                                setState(() async {
-                                  final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                  List<String> favs = prefs.getStringList("favs") ?? [];
-
-                                  for (var fav in favs) {
-                                    if (fav == skin.uuid) {
-                                      setState(() {
-                                        skin.isFavourite = true;
-                                      });
-                                    }else{
-                                      setState(() {
-                                        skin.isFavourite = false;
-                                      });
-                                    }
-                                  }
-                                });
-                              },
-                            )
-                          ],
+                return GestureDetector(
+                    onTap: () {
+                      var param1 = skin.uuid;
+                      context.goNamed('skin-detail',
+                          pathParameters: {'id': param1.toString()});
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              skin.displayIcon ?? weapon.displayIcon),
+                          fit: BoxFit.contain,
                         ),
                       ),
-                    ),
-                  ),
-                );
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 180),
+                        child: SizedBox(
+                          width: double.maxFinite,
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  skin.displayName?.toUpperCase() ?? "",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontFamily: 'monument',
+                                      fontSize: 16,
+                                      color: Colors.white),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      child: Icon(
+                                        skin.isFavourite
+                                            ? Icons.favorite_outlined
+                                            : Icons.favorite_border,
+                                        color: skin.isFavourite
+                                            ? Colors.red
+                                            : Colors.grey,
+                                      ),
+                                      onTap: () {
+                                        BlocProvider.of<FavouriteCubit>(context)
+                                            .setPreference(skin.uuid ?? "");
+
+                                        setState(() async {
+                                          final SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          List<String> favs =
+                                              prefs.getStringList("favs") ?? [];
+
+                                          for (var fav in favs) {
+                                            if (fav == skin.uuid) {
+                                              setState(() {
+                                                skin.isFavourite = true;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                skin.isFavourite = false;
+                                              });
+                                            }
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      width: 30,
+                                    ),
+                                    InkWell(
+                                      child: const Icon(
+                                        Icons.info_outline,
+                                        color: Colors.grey,
+                                      ),
+                                      onTap: () {
+                                        var param1 = skin.uuid;
+                                        context.goNamed('skin-detail',
+                                            pathParameters: {
+                                              'id': param1.toString()
+                                            });
+                                      },
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ));
               }).toList(),
               options: CarouselOptions(
                 height: 390,
@@ -234,8 +268,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                   ),
                                 ),
                                 Text(
-                                  weapon.shopData?.cost.toString() ??
-                                      "",
+                                  weapon.shopData?.cost.toString() ?? "",
                                   style: const TextStyle(
                                     fontFamily: 'monument',
                                     fontSize: 24,
@@ -346,8 +379,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      weapon.weaponStats
-                                              ?.damageRanges?[0].headDamage
+                                      weapon.weaponStats?.damageRanges?[0]
+                                              .headDamage
                                               .round()
                                               .toString() ??
                                           "",
@@ -410,8 +443,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      weapon.weaponStats
-                                              ?.damageRanges?[0].bodyDamage
+                                      weapon.weaponStats?.damageRanges?[0]
+                                              .bodyDamage
                                               .round()
                                               .toString() ??
                                           "",
@@ -474,8 +507,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      weapon.weaponStats
-                                              ?.damageRanges?[0].legDamage
+                                      weapon.weaponStats?.damageRanges?[0]
+                                              .legDamage
                                               .round()
                                               .toString() ??
                                           "",
@@ -570,8 +603,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
                           progressColor: Colors.white,
                           barRadius: const Radius.circular(10),
                           percent: percent(
-                                  double.parse(weapon.weaponStats
-                                          ?.reloadTimeSeconds
+                                  double.parse(weapon
+                                          .weaponStats?.reloadTimeSeconds
                                           .toString() ??
                                       ""),
                                   5.0) /
@@ -594,9 +627,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                               ),
                             ),
                             Text(
-                              weapon.weaponStats?.magazineSize
-                                      .toString() ??
-                                  "",
+                              weapon.weaponStats?.magazineSize.toString() ?? "",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'poppins',
@@ -612,9 +643,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                           backgroundColor: Colors.grey,
                           lineHeight: 15,
                           center: Text(
-                              weapon.weaponStats?.magazineSize
-                                      .toString() ??
-                                  "",
+                              weapon.weaponStats?.magazineSize.toString() ?? "",
                               style: const TextStyle(fontSize: 11)),
                           progressColor: Colors.white,
                           barRadius: const Radius.circular(10),
@@ -643,8 +672,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                 ),
                               ),
                               Text(
-                                weapon.weaponStats?.adsStats
-                                        ?.zoomMultiplier
+                                weapon.weaponStats?.adsStats?.zoomMultiplier
                                         .toString() ??
                                     "",
                                 style: const TextStyle(
@@ -663,16 +691,15 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             backgroundColor: Colors.grey,
                             lineHeight: 15,
                             center: Text(
-                                weapon.weaponStats?.adsStats
-                                        ?.zoomMultiplier
+                                weapon.weaponStats?.adsStats?.zoomMultiplier
                                         .toString() ??
                                     "",
                                 style: const TextStyle(fontSize: 11)),
                             progressColor: Colors.white,
                             barRadius: const Radius.circular(10),
                             percent: percent(
-                                    double.parse(weapon.weaponStats
-                                            ?.adsStats?.zoomMultiplier
+                                    double.parse(weapon.weaponStats?.adsStats
+                                            ?.zoomMultiplier
                                             .toString() ??
                                         ""),
                                     3.5) /
@@ -724,8 +751,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             progressColor: Colors.white,
                             barRadius: const Radius.circular(10),
                             percent: percent(
-                                    double.parse(weapon.weaponStats
-                                            ?.adsStats?.fireRate
+                                    double.parse(weapon
+                                            .weaponStats?.adsStats?.fireRate
                                             .round()
                                             .toString() ??
                                         ""),
@@ -777,8 +804,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             barRadius: const Radius.circular(10),
                             percent: percent(
                                     double.parse(
-                                      weapon.weaponStats
-                                              ?.firstBulletAccuracy
+                                      weapon.weaponStats?.firstBulletAccuracy
                                               .toString() ??
                                           "",
                                     ),

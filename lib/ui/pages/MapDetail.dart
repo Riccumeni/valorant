@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:valorant/data/models/map/MapsResponse.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../business_logic/bloc/map/maps_cubit.dart';
+
 class MapDetail extends StatefulWidget {
-  final Maps maps;
-  const MapDetail({Key? key, required this.maps}) : super(key: key);
+
+  const MapDetail({Key? key}) : super(key: key);
 
   @override
   State<MapDetail> createState() => _MapDetailState();
@@ -14,9 +18,11 @@ class MapDetail extends StatefulWidget {
 
 class _MapDetailState extends State<MapDetail> {
 
+  late Maps map;
   @override
   void initState() {
     super.initState();
+    map =  BlocProvider.of<MapsCubit>(context).maps;
   }
 
   @override
@@ -30,7 +36,7 @@ class _MapDetailState extends State<MapDetail> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            context.go('/maps');
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -39,7 +45,7 @@ class _MapDetailState extends State<MapDetail> {
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
-              widget.maps.displayName.toUpperCase(),
+              map.displayName.toUpperCase(),
               style: const TextStyle(
                 fontFamily: 'monument',
                 fontSize: 28,
@@ -61,7 +67,7 @@ class _MapDetailState extends State<MapDetail> {
               child: SizedBox.fromSize(
                 size: const Size.fromRadius(200), // Image radius
                 child: Image.network(
-                  widget.maps.splash,
+                  map.splash,
                   width: MediaQuery.of(context).size.width,
                   height: 420,
                   fit: BoxFit.cover,
@@ -74,9 +80,9 @@ class _MapDetailState extends State<MapDetail> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if( widget.maps.coordinates != null)
+                  if( map.coordinates != null)
                   const SizedBox(height: 30),
-                  if( widget.maps.coordinates != null)
+                  if( map.coordinates != null)
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -89,11 +95,11 @@ class _MapDetailState extends State<MapDetail> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  if( widget.maps.coordinates != null)
+                  if( map.coordinates != null)
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      widget.maps.coordinates.toString(),
+                      map.coordinates.toString(),
                       style: const TextStyle(
                         fontFamily: 'poppins',
                         fontSize: 16,
@@ -123,7 +129,7 @@ class _MapDetailState extends State<MapDetail> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  if (widget.maps.displayIcon != null)
+                  if (map.displayIcon != null)
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -136,14 +142,14 @@ class _MapDetailState extends State<MapDetail> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (widget.maps.displayIcon != null)
+                  if (map.displayIcon != null)
                   Transform(
                     alignment: Alignment.center,
                     transform: Matrix4.rotationZ(
                       6.27 / 4,
                     ),
                     child: Image.network(
-                      widget.maps.displayIcon,
+                      map.displayIcon,
                       width: 340,
                       height: 340,
                       fit: BoxFit.cover,

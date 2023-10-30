@@ -9,7 +9,9 @@ part 'maps_state.dart';
 class MapsCubit extends Cubit<MapsState> {
   MapsCubit() : super(LoadingMapsState());
 
- MapsRepository repository = MapsRepository();
+  MapsRepository repository = MapsRepository();
+
+  late Maps maps;
 
   Future<void> getMaps() async {
 
@@ -22,5 +24,9 @@ class MapsCubit extends Cubit<MapsState> {
       print(e);
       emit(ErrorMapsState());
     }
+  }
+
+  void setMap (Maps tappedMap){
+    maps = tappedMap;
   }
 }

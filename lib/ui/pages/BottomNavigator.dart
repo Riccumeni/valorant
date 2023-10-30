@@ -1,14 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/favourite/favourite_cubit.dart';
+import 'package:valorant/business_logic/bloc/map/maps_cubit.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
 import 'package:valorant/data/models/champion/ChampionsResponse.dart';
 import 'package:valorant/data/models/weapons/WeaponsResponse.dart';
 import 'package:valorant/ui/pages/ChampionDetail.dart';
+import 'package:valorant/ui/pages/Maps.dart';
 import 'package:valorant/ui/pages/ChampionList.dart';
 import 'package:valorant/ui/pages/FavouritePage.dart';
 import 'package:valorant/ui/pages/HomePage.dart';
@@ -16,6 +16,8 @@ import 'package:valorant/ui/pages/WeaponsDetail.dart';
 import 'package:valorant/ui/pages/Weapons.dart';
 import '../../business_logic/bloc/champion/champions_cubit.dart';
 import '../../business_logic/bloc/weapon/weapon_cubit.dart';
+import 'package:valorant/ui/pages/MapDetail.dart';
+import 'package:valorant/ui/pages/SkinDetail.dart';
 
 class BottomNavigator extends StatefulWidget {
   const BottomNavigator({super.key});
@@ -43,7 +45,21 @@ class _BottomNavigatorState extends State<BottomNavigator> {
     ),
     GoRoute(
         path: '/weapon-detail',
-        builder: (context, state) => WeaponDetail())
+        builder: (context, state) => WeaponDetail()
+    ),
+    GoRoute(path: '/maps',
+    builder: (context, state) => MapsPage()
+    ),
+    GoRoute(path: '/map-detail',
+    builder: (context, state) => MapDetail()
+    ),
+    GoRoute(
+      path: '/skin-detail/:id',
+      name: 'skin-detail',
+      builder: (context, state) => SkinDetail(
+        id: state.pathParameters['id']?? '',
+      ),
+    ),
   ]);
 
   static final GoRouter favouriteRouter =
@@ -81,6 +97,7 @@ class _BottomNavigatorState extends State<BottomNavigator> {
             BlocProvider(create: (context) => WeaponCubit()),
             BlocProvider(create: (context) => FavouriteCubit()),
             BlocProvider(create: (context) => SkinCubit()),
+            BlocProvider(create: (context) => MapsCubit()),
           ],
           child: _widgetOptions.elementAt(_selectedIndex),
         ),

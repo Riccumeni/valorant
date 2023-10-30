@@ -120,12 +120,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => BlocProvider.value(
-                    child: MapsPage(),
-                    value: MapsCubit(),
-                  ),
-                ));
+                context.go('/maps');
               },
             ),
             GestureDetector(

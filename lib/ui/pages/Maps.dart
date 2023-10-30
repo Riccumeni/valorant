@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:valorant/ui/pages/MapDetail.dart';
 import '../../business_logic/bloc/map/maps_cubit.dart';
 
@@ -26,10 +27,11 @@ class _MapsPageState extends State<MapsPage> {
         backgroundColor: const Color.fromARGB(255, 30, 30, 30),
         appBar: AppBar(
           elevation: 0,
-          toolbarHeight: 100,
+          backgroundColor: const Color.fromARGB(255, 38, 38, 38),
+          toolbarHeight: 70,
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.go('/');
             },
             icon: const Icon(Icons.arrow_back_ios),
           ),
@@ -51,14 +53,8 @@ class _MapsPageState extends State<MapsPage> {
                 itemBuilder: (BuildContext context, index) {
                   return InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MapDetail(
-                              maps: state.mapsResponse!.data![index]),
-
-                        ),
-
-                      );
+                      BlocProvider.of<MapsCubit>(context).setMap(state.mapsResponse!.data![index]);
+                      context.go('/map-detail');
                     },
                     child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 5),

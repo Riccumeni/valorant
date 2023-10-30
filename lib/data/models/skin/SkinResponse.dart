@@ -1,10 +1,10 @@
-class SkinResponse {
+class SkinsResponse {
   int? status;
   List<Skin>? data;
 
-  SkinResponse({this.status, this.data});
+  SkinsResponse({this.status, this.data});
 
-  SkinResponse.fromJson(Map<String, dynamic> json) {
+  SkinsResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     if (json['data'] != null) {
       data = <Skin>[];
@@ -19,6 +19,29 @@ class SkinResponse {
     data['status'] = this.status;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class SkinResponse {
+  int? status;
+  Skin? data;
+
+  SkinResponse({this.status, this.data});
+
+  SkinResponse.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    if (json['data'] != null) {
+      data = Skin.fromJson(json['data']);
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = status;
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
     }
     return data;
   }

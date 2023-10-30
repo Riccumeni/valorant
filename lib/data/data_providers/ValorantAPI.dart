@@ -6,7 +6,11 @@ class ValorantAPI {
     print(maps);
     return maps.body.toString();
   }
-
+  Future<String> getChampions() async {
+    var raw =
+    await http.get(Uri.parse("https://valorant-api.com/v1/agents"));
+    return raw.body.toString();
+  }
   Future<String> getChampion(String id) async {
     var raw =
         await http.get(Uri.parse("https://valorant-api.com/v1/agents/$id"));
@@ -21,6 +25,11 @@ class ValorantAPI {
   Future<String> getSkins() async {
     var raw =
         await http.get(Uri.parse("https://valorant-api.com/v1/weapons/skins/"));
+    return raw.body.toString();
+  }
+  Future<String> getSkin(String id) async {
+    var raw =
+    await http.get(Uri.parse("https://valorant-api.com/v1/weapons/skins/$id"));
     return raw.body.toString();
   }
 }

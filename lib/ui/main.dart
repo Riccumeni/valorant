@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:valorant/ui/pages/BottomNavigator.dart';
-import 'package:valorant/ui/pages/HomePage.dart';
+
 
 Map<int, Color> color = {
   50: Color.fromRGBO(30, 30, 30, .1),

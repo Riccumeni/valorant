@@ -13,18 +13,46 @@ class SkinCubit extends Cubit<SkinState> {
 
   SkinRepository repository = SkinRepository();
 
-  Future<void> getSkinsByFavourite() async {
+  Future<void> getSkins() async {
+
     emit(SkinLoading());
 
     try{
-      SkinResponse response = await repository.getWeaponsFilteredByPreferences();
+      SkinsResponse response = await repository.getSkins();
       emit(SkinSuccess(skinResponse: response));
     }catch(e){
       emit(SkinError());
     }
   }
 
-  Future<void> removeSkinByFavourite(SkinResponse skins, String uuid) async{
+  late Skin skin;
+  Future<void> getSkin(String id) async {
+
+    emit(SkinLoading());
+
+    try{
+      SkinResponse response = await repository.getSkin(id);
+      emit(SkinSuccess(skinResponse: response));
+    }catch(e){
+      emit(SkinError());
+    }
+  }void setSkin (Skin tappedSkin){
+    skin = tappedSkin;
+  }
+
+
+  Future<void> getSkinsByFavourite() async {
+    emit(SkinLoading());
+
+    try{
+      SkinsResponse response = await repository.getWeaponsFilteredByPreferences();
+      emit(SkinSuccess(skinResponse: response));
+    }catch(e){
+      emit(SkinError());
+    }
+  }
+
+  Future<void> removeSkinByFavourite(SkinsResponse skins, String uuid) async{
 
     emit(SkinLoading());
 
