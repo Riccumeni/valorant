@@ -98,24 +98,15 @@ class _WeaponDetailState extends State<WeaponDetail> {
           children: [
             CarouselSlider(
               items: skins.map((skin) {
-                return GestureDetector(
-                    onTap: () {
-                      var param1 = skin.uuid;
-                      context.goNamed('skin-detail',
-                          pathParameters: {'id': param1.toString()});
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              skin.displayIcon ?? weapon.displayIcon),
-                          fit: BoxFit.contain,
+                return Column(
+                      children: [
+                        SizedBox(
+                          height: 320,
+                          child: Image.network(
+                              skin.chromas?[0].fullRender ?? weapon.displayIcon,
+                              fit: BoxFit.contain),
                         ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 180),
-                        child: SizedBox(
+                        SizedBox(
                           width: double.maxFinite,
                           child: Align(
                             alignment: Alignment.bottomCenter,
@@ -134,69 +125,73 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                   height: 20,
                                 ),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    InkWell(
-                                      child: Icon(
-                                        skin.isFavourite
-                                            ? Icons.favorite_outlined
-                                            : Icons.favorite_border,
-                                        color: skin.isFavourite
-                                            ? Colors.red
-                                            : Colors.grey,
-                                      ),
-                                      onTap: () {
-                                        BlocProvider.of<FavouriteCubit>(context)
-                                            .setPreference(skin.uuid ?? "");
+                                    SizedBox(
+                                      width: 50,
+                                      child: InkWell(
+                                        child: Icon(
+                                          skin.isFavourite
+                                              ? Icons.favorite_outlined
+                                              : Icons.favorite_border,
+                                          color: skin.isFavourite
+                                              ? Colors.red
+                                              : Colors.grey,
+                                        ),
+                                        onTap: () {
+                                          BlocProvider.of<FavouriteCubit>(context)
+                                              .setPreference(skin.uuid ?? "");
 
-                                        setState(() async {
-                                          final SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          List<String> favs =
-                                              prefs.getStringList("favs") ?? [];
+                                          setState(() async {
+                                            final SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                            List<String> favs =
+                                                prefs.getStringList("favs") ?? [];
 
-                                          for (var fav in favs) {
-                                            if (fav == skin.uuid) {
-                                              setState(() {
-                                                skin.isFavourite = true;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                skin.isFavourite = false;
-                                              });
+                                            for (var fav in favs) {
+                                              if (fav == skin.uuid) {
+                                                setState(() {
+                                                  skin.isFavourite = true;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  skin.isFavourite = false;
+                                                });
+                                              }
                                             }
-                                          }
-                                        });
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    InkWell(
-                                      child: const Icon(
-                                        Icons.info_outline,
-                                        color: Colors.grey,
+                                          });
+                                        },
                                       ),
-                                      onTap: () {
-                                        var param1 = skin.uuid;
-                                        context.goNamed('skin-detail',
-                                            pathParameters: {
-                                              'id': param1.toString()
-                                            });
-                                      },
-                                    )
+                                    ),
+
+                                    if (skins.indexOf(skin) > 0)
+                                      InkWell(
+                                        child: const Icon(
+                                          Icons.info_outline,
+                                          color: Colors.grey,
+                                        ),
+                                        onTap: () {
+                                          var param1 = skin.uuid;
+                                          context.goNamed('skin-detail',
+                                              pathParameters: {
+                                                'id': param1.toString()
+                                              });
+                                        },
+                                      )
                                   ],
                                 )
                               ],
                             ),
                           ),
                         ),
-                      ),
-                    ));
+                      ],
+                    );
               }).toList(),
               options: CarouselOptions(
-                height: 390,
+                height: 500,
                 enlargeCenterPage: true,
                 aspectRatio: 16 / 9,
                 autoPlayCurve: Curves.fastOutSlowIn,
@@ -205,7 +200,6 @@ class _WeaponDetailState extends State<WeaponDetail> {
                 onPageChanged: cycleImages,
               ),
             ),
-            const SizedBox(height: 50),
             if (weapon.shopData?.category != null)
               const Text(
                 "INFORMATION",

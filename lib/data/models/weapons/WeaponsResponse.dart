@@ -263,6 +263,7 @@ class Skins {
   String? wallpaper;
   String? assetPath;
   bool isFavourite = false;
+  List<Chromas>? chromas = [];
 
 
   Skins(
@@ -273,6 +274,7 @@ class Skins {
         this.displayIcon,
         this.wallpaper,
         this.assetPath,
+        this.chromas,
 });
 
   Skins.fromJson(Map<String, dynamic> json) {
@@ -283,6 +285,11 @@ class Skins {
     displayIcon = json['displayIcon'];
     wallpaper = json['wallpaper'];
     assetPath = json['assetPath'];
+    if (json['chromas'] != null) {
+      json['chromas'].forEach((v) {
+        chromas!.add(Chromas.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -293,6 +300,50 @@ class Skins {
     data['contentTierUuid'] = this.contentTierUuid;
     data['displayIcon'] = this.displayIcon;
     data['wallpaper'] = this.wallpaper;
+    data['assetPath'] = this.assetPath;
+    if (this.chromas != null) {
+      data['chromas'] = this.chromas!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Chromas {
+  String? uuid;
+  String? displayName;
+  String? displayIcon;
+  String? fullRender;
+  String? swatch;
+  String? streamedVideo;
+  String? assetPath;
+
+  Chromas(
+      {this.uuid,
+        this.displayName,
+        this.displayIcon,
+        this.fullRender,
+        this.swatch,
+        this.streamedVideo,
+        this.assetPath});
+
+  Chromas.fromJson(Map<String, dynamic> json) {
+    uuid = json['uuid'];
+    displayName = json['displayName'];
+    displayIcon = json['displayIcon'];
+    fullRender = json['fullRender'];
+    swatch = json['swatch'];
+    streamedVideo = json['streamedVideo'];
+    assetPath = json['assetPath'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['uuid'] = this.uuid;
+    data['displayName'] = this.displayName;
+    data['displayIcon'] = this.displayIcon;
+    data['fullRender'] = this.fullRender;
+    data['swatch'] = this.swatch;
+    data['streamedVideo'] = this.streamedVideo;
     data['assetPath'] = this.assetPath;
     return data;
   }
