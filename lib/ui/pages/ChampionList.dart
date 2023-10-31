@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -79,16 +80,21 @@ class _ChampionListState extends State<ChampionList> {
                       width: 200,
                       child: TextField(
                         controller: _controller,
-                        onChanged: (String value){
+                        onChanged: (String value) {
                           setState(() {
                             text = value;
                           });
-                          BlocProvider.of<ChampionsCubit>(context).getChampions(text: value, category: selected);
+                          BlocProvider.of<ChampionsCubit>(context)
+                              .getChampions(text: value, category: selected);
                         },
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey),),
-                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey),),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
                           hintStyle: TextStyle(color: Colors.white70),
                           hintText: 'Type here...',
                         ),
@@ -96,22 +102,22 @@ class _ChampionListState extends State<ChampionList> {
                     ),
                   ),
                   DropdownButton<String>(
-                    style: const TextStyle(color: Colors.white),
-                    dropdownColor: Colors.black,
-                    value: selected,
+                      style: const TextStyle(color: Colors.white),
+                      dropdownColor: Colors.black,
+                      value: selected,
                       items: category.map<DropdownMenuItem<String>>((String e) {
                         return DropdownMenuItem<String>(
-                        value: e,
-                        child: Text(e),
+                          value: e,
+                          child: Text(e),
                         );
                       }).toList(),
-                      onChanged: (value){
+                      onChanged: (value) {
                         setState(() {
                           selected = value!;
-                          BlocProvider.of<ChampionsCubit>(context).getChampions(text: text, category: value);
+                          BlocProvider.of<ChampionsCubit>(context)
+                              .getChampions(text: text, category: value);
                         });
-                      }
-                  )
+                      })
                 ],
               ),
             ),
@@ -121,10 +127,11 @@ class _ChampionListState extends State<ChampionList> {
                   if (state is SuccessChampionsState) {
                     return GridView.builder(
                       itemCount: state.championsResponse!.data!.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisExtent: 230,
-                          mainAxisSpacing: 40),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisExtent: 230,
+                              mainAxisSpacing: 40),
                       itemBuilder: (_, index) {
                         return InkWell(
                           onTap: () {
@@ -143,13 +150,21 @@ class _ChampionListState extends State<ChampionList> {
                                     "0xFF${state.championsResponse!.data![index].backgroundGradientColors![1].toString().substring(0, 6)}")),
                               ),
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   CachedNetworkImage(
                                     imageUrl: state.championsResponse!.data![index].bustPortrait ?? "",
                                   ),
                                   Container(
                                       margin: const EdgeInsets.only(bottom: 20),
+                                      child: CachedNetworkImage(
+                                    imageUrl: state.championsResponse!
+                                            .data![index]!.bustPortrait ??
+                                        "",
+                                  )),
+                                  Container(
+                                      margin: EdgeInsets.only(bottom: 20),
                                       child: Text(
                                         "${state.championsResponse!.data![index].displayName}"
                                             .toUpperCase(),
@@ -157,8 +172,7 @@ class _ChampionListState extends State<ChampionList> {
                                             color: ColorsTheme.onPrimary,
                                             fontFamily: 'monument',
                                             fontSize: 22),
-                                      )
-                                  ),
+                                      )),
                                 ],
                               )
                             ],
@@ -166,21 +180,22 @@ class _ChampionListState extends State<ChampionList> {
                         );
                       },
                     );
-                  }
-                  else if(state is LoadingChampionsState){
+                  } else if (state is LoadingChampionsState) {
                     return const Center(
-                      child: CircularProgressIndicator(color: Color.fromARGB(255,235, 86, 91),),
+                      child: CircularProgressIndicator(
+                        color: Color.fromARGB(255, 235, 86, 91),
+                      ),
                     );
-                  }
-                  else{
+                  } else {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children:  [
                         Icon(Icons.dangerous_outlined, color: ColorsTheme.valorant, size: 60,),
                         Container(
                           margin: const EdgeInsets.only(top: 20),
-                          child: const Text("Something was wrong, check your internet connection",
-                              style: TextStyle(
+                          child: const Text(
+                            "Something was wrong, check your internet connection",
+                            style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'monument',
                                 fontSize: 14),
@@ -194,7 +209,6 @@ class _ChampionListState extends State<ChampionList> {
               ),
             ),
           ],
-        )
-    );
+        ));
   }
 }

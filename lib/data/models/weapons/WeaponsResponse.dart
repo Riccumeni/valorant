@@ -40,13 +40,13 @@ class Weapon {
 
   Weapon(
       {this.uuid,
-        required this.displayName,
-        this.category,
-        this.defaultSkinUuid,
-        required this.displayIcon,
-        this.weaponStats,
-        this.shopData,
-        required this.skins});
+      required this.displayName,
+      this.category,
+      this.defaultSkinUuid,
+      required this.displayIcon,
+      this.weaponStats,
+      this.shopData,
+      required this.skins});
 
   factory Weapon.fromJson(Map<String, dynamic> json) {
     final uuid = json['uuid'];
@@ -67,7 +67,15 @@ class Weapon {
         skins!.add(new Skin.fromJson(v));
       });
     }
-    return Weapon(uuid: uuid, displayName: displayName, category: category, defaultSkinUuid: defaultSkinUuid, displayIcon: displayIcon, weaponStats: weaponStats, shopData: shopData, skins: skins);
+    return Weapon(
+        uuid: uuid,
+        displayName: displayName,
+        category: category,
+        defaultSkinUuid: defaultSkinUuid,
+        displayIcon: displayIcon,
+        weaponStats: weaponStats,
+        shopData: shopData,
+        skins: skins);
   }
 
   Map<String, dynamic> toJson() {
@@ -109,18 +117,18 @@ class WeaponStats {
 
   WeaponStats(
       {this.fireRate,
-        this.magazineSize,
-        this.runSpeedMultiplier,
-        this.equipTimeSeconds,
-        this.reloadTimeSeconds,
-        this.firstBulletAccuracy,
-        this.shotgunPelletCount,
-        this.wallPenetration,
-        this.feature,
-        this.fireMode,
-        this.altFireType,
-        this.adsStats,
-        this.damageRanges});
+      this.magazineSize,
+      this.runSpeedMultiplier,
+      this.equipTimeSeconds,
+      this.reloadTimeSeconds,
+      this.firstBulletAccuracy,
+      this.shotgunPelletCount,
+      this.wallPenetration,
+      this.feature,
+      this.fireMode,
+      this.altFireType,
+      this.adsStats,
+      this.damageRanges});
 
   WeaponStats.fromJson(Map<String, dynamic> json) {
     fireRate = json['fireRate'];
@@ -177,10 +185,10 @@ class AdsStats {
 
   AdsStats(
       {this.zoomMultiplier,
-        this.fireRate,
-        this.runSpeedMultiplier,
-        this.burstCount,
-        this.firstBulletAccuracy});
+      this.fireRate,
+      this.runSpeedMultiplier,
+      this.burstCount,
+      this.firstBulletAccuracy});
 
   AdsStats.fromJson(Map<String, dynamic> json) {
     zoomMultiplier = json['zoomMultiplier'];
@@ -210,10 +218,10 @@ class DamageRanges {
 
   DamageRanges(
       {this.rangeStartMeters,
-        this.rangeEndMeters,
-        this.headDamage,
-        this.bodyDamage,
-        this.legDamage});
+      this.rangeEndMeters,
+      this.headDamage,
+      this.bodyDamage,
+      this.legDamage});
 
   DamageRanges.fromJson(Map<String, dynamic> json) {
     rangeStartMeters = json['rangeStartMeters'];
@@ -238,9 +246,10 @@ class ShopData {
   int? cost;
   String? category;
 
-  ShopData(
-      {this.cost,
-        this.category,});
+  ShopData({
+    this.cost,
+    this.category,
+  });
 
   ShopData.fromJson(Map<String, dynamic> json) {
     cost = json['cost'];
@@ -265,6 +274,7 @@ class Skins {
   String? wallpaper;
   String? assetPath;
   bool isFavourite = false;
+  List<Chromas>? chromas = [];
 
 
   Skins(
@@ -275,6 +285,7 @@ class Skins {
         this.displayIcon,
         this.wallpaper,
         this.assetPath,
+        this.chromas,
 });
 
   Skins.fromJson(Map<String, dynamic> json) {
@@ -285,6 +296,11 @@ class Skins {
     displayIcon = json['displayIcon'];
     wallpaper = json['wallpaper'];
     assetPath = json['assetPath'];
+    if (json['chromas'] != null) {
+      json['chromas'].forEach((v) {
+        chromas!.add(Chromas.fromJson(v));
+      });
+    }
   }
 
   Skin toSkin(){
@@ -303,4 +319,54 @@ class Skins {
     return data;
   }
 }
+
+
+    data['wallpaper'] = this.wallpaper;
+    data['assetPath'] = this.assetPath;
+    if (this.chromas != null) {
+      data['chromas'] = this.chromas!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
 */
+class Chromas {
+  String? uuid;
+  String? displayName;
+  String? displayIcon;
+  String? fullRender;
+  String? swatch;
+  String? streamedVideo;
+  String? assetPath;
+
+  Chromas(
+      {this.uuid,
+      this.displayName,
+      this.displayIcon,
+      this.fullRender,
+      this.swatch,
+      this.streamedVideo,
+      this.assetPath});
+
+  Chromas.fromJson(Map<String, dynamic> json) {
+    uuid = json['uuid'];
+    displayName = json['displayName'];
+    displayIcon = json['displayIcon'];
+    fullRender = json['fullRender'];
+    swatch = json['swatch'];
+    streamedVideo = json['streamedVideo'];
+    assetPath = json['assetPath'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['uuid'] = this.uuid;
+    data['displayName'] = this.displayName;
+    data['displayIcon'] = this.displayIcon;
+    data['fullRender'] = this.fullRender;
+    data['swatch'] = this.swatch;
+    data['streamedVideo'] = this.streamedVideo;
+    data['assetPath'] = this.assetPath;
+    return data;
+  }
+}

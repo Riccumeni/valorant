@@ -1,69 +1,61 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:valorant/ui/pages/MapDetail.dart';
+import '../../business_logic/bloc/map/maps_cubit.dart';
 
 class MapsPage extends StatefulWidget {
-  const MapsPage({super.key});
+  const MapsPage({Key? key}) : super(key: key);
 
   @override
   State<MapsPage> createState() => _MapsPageState();
 }
 
 class _MapsPageState extends State<MapsPage> {
-  List _maps = [];
-
-  Future<void> _fetchData() async {
-    const apiUrl = 'https://valorant-api.com/v1/maps';
-
-    final response = await http.get(Uri.parse(apiUrl));
-    final data = json.decode(response.body);
-
-    setState(() {
-      _maps = data["data"];
-    });
-  }
-
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    _fetchData();
+    BlocProvider.of<MapsCubit>(context).getMaps();
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-      appBar: AppBar(
-        elevation: 0,
-        toolbarHeight: 100,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back_ios),
-        ),
-        title: Center(
-          child: Container(
-            margin: const EdgeInsets.only(top: 30, right: 60),
-            child: SvgPicture.asset(
-              "./assets/valorant-logo.svg",
-              width: 70,
-              height: 70,
+        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: const Color.fromARGB(255, 38, 38, 38),
+          toolbarHeight: 70,
+          leading: IconButton(
+            onPressed: () {
+              context.go('/');
+            },
+            icon: const Icon(Icons.arrow_back_ios),
+          ),
+          title: Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 30, right: 60),
+              child: SvgPicture.asset(
+                "./assets/valorant-logo.svg",
+                width: 70,
+                height: 70,
+              ),
             ),
           ),
         ),
-      ),
-      body: Container(
-        child: _maps.isEmpty
-            ? const Center(
-                child: Text("Is loading"),
-              )
-            : ListView.builder(
-                itemCount: _maps.length,
+        body: BlocBuilder<MapsCubit, MapsState>(builder: (context, state) {
+          if (state is SuccessMapsState) {
+            return ListView.builder(
+                itemCount: state.mapsResponse!.data!.length,
                 itemBuilder: (BuildContext context, index) {
                   return InkWell(
+                    onTap: () {
+                      BlocProvider.of<MapsCubit>(context).setMap(state.mapsResponse!.data![index]);
+                      context.go('/map-detail');
+                    },
                     child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         alignment: Alignment.centerLeft,
@@ -76,26 +68,49 @@ class _MapsPageState extends State<MapsPage> {
                                 fit: BoxFit.cover,
                                 // TODO: Scegliere listViewIcon (leggera ma peggiore) o splash (pesante ma migliore)
                                 image: NetworkImage(
-                                  _maps[index]["listViewIcon"],
+                                  state
+                                      .mapsResponse!.data![index]!.listViewIcon,
                                 ))),
                         child: Text(
-                          _maps[index]["displayName"].toUpperCase(),
+                          state.mapsResponse!.data![index]!.displayName
+                              .toUpperCase(),
                           style: const TextStyle(
                             fontFamily: 'monument',
                             fontSize: 26,
                             color: Colors.white,
                           ),
                         )),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MapDetail(maps: _maps[index]),
-                        ),
-                      );
-                    },
                   );
-                }),
-      ),
-    );
+                });
+          } else if (state is LoadingMapsState) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color.fromARGB(255, 235, 86, 91),
+              ),
+            );
+          } else {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.dangerous_outlined,
+                  color: Color.fromARGB(255, 235, 86, 91),
+                  size: 60,
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  child: const Text(
+                    "Something was wrong, check your internet connection",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'monument',
+                        fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              ],
+            );
+          }
+        }));
   }
 }

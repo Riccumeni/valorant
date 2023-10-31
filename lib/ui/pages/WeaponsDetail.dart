@@ -6,7 +6,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
 import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
 import 'package:valorant/data/models/weapons/WeaponsResponse.dart';
-
+import '../../business_logic/bloc/skins/skin_cubit.dart';
 import '../../data/models/skin/SkinResponse.dart';
 
 class WeaponDetail extends StatefulWidget {
@@ -105,36 +105,40 @@ class _WeaponDetailState extends State<WeaponDetail> {
                   //BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(newSkins);
                   return CarouselSlider(
                     items: newSkins.map((skin) {
-                      return Container(
-                        margin: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                skin.displayIcon ?? weapon.displayIcon),
-                            fit: BoxFit.contain,
-                          ),
+                      return Column(
+                      children: [
+                        SizedBox(
+                          height: 320,
+                          child: Image.network(
+                              skin.chromas?[0].fullRender ?? weapon.displayIcon,
+                              fit: BoxFit.contain),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 180),
-                          child: SizedBox(
-                            width: double.maxFinite,
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    skin.displayName?.toUpperCase() ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                        fontFamily: 'monument',
-                                        fontSize: 16,
-                                        color: Colors.white),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  InkWell(
+                        SizedBox(
+                          width: double.maxFinite,
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  skin.displayName?.toUpperCase() ?? "",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontFamily: 'monument',
+                                      fontSize: 16,
+                                      color: Colors.white),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      width: 50,
+                                      child: InkWell(
                                     child: Icon(
                                       skin.isFavourite
                                           ? Icons.favorite_outlined
@@ -148,12 +152,31 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                       BlocProvider.of<SkinCubit>(context).setPreference(newSkins, skin.toJson());
                                     },
                                   )
-                                ],
-                              ),
+                                    ),
+
+                                    if (skins.indexOf(skin) > 0)
+                                      InkWell(
+                                        child: const Icon(
+                                          Icons.info_outline,
+                                          color: Colors.grey,
+                                        ),
+                                        onTap: () {
+                                          var param1 = skin.uuid;
+                                          context.goNamed('skin-detail',
+                                              pathParameters: {
+                                                'id': param1.toString()
+                                              });
+                                        },
+                                      )
+                                  ],
+                                )
+                              ],
                             ),
                           ),
                         ),
-                      );
+                      ],
+                    )
+                    );
                     }).toList(),
                     options: CarouselOptions(
                       height: 390,
@@ -173,7 +196,6 @@ class _WeaponDetailState extends State<WeaponDetail> {
 
               },
             ),
-            const SizedBox(height: 50),
             if (weapon.shopData?.category != null)
               const Text(
                 "INFORMATION",

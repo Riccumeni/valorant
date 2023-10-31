@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/champion/champions_cubit.dart';
 import 'package:valorant/ui/pages/ChampionList.dart';
 import 'package:valorant/ui/pages/Maps.dart';
+import '../../business_logic/bloc/map/maps_cubit.dart';
 import 'Weapons.dart';
 
 class HomePage extends StatelessWidget {
@@ -51,10 +52,11 @@ class HomePage extends StatelessWidget {
                           "AGENTS",
                           style: TextStyle(
                             fontFamily: 'monument',
-                            fontSize: 26,
+                            fontSize: 24,
                             color: Colors.white,
                           ),
                         ),
+                        SizedBox(height: 5),
                         Text(
                           "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
                           style: TextStyle(
@@ -68,6 +70,7 @@ class HomePage extends StatelessWidget {
                     Image.asset(
                       "./assets/agents.png",
                       height: 165,
+                      width: 170,
                     )
                   ],
                 ),
@@ -94,17 +97,18 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(width: 15),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        SizedBox(height: 45),
                         Text(
                           "MAPS",
                           style: TextStyle(
                             fontFamily: 'monument',
-                            fontSize: 26,
+                            fontSize: 24,
                             color: Colors.white,
                           ),
                         ),
+                        SizedBox(height: 5),
                         Text(
                           'Find more ways to plant the \nSpike and style on your \nenemies with scrappers,\nstrategists, and hunters \nof every description.',
                           style: TextStyle(
@@ -119,11 +123,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => MapsPage(),
-                  ),
-                );
+                context.go('/maps');
               },
             ),
             GestureDetector(
@@ -139,17 +139,18 @@ class HomePage extends StatelessWidget {
                 child: Row(
                   children: [
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        SizedBox(height: 45),
                         Text(
                           "WEAPONS",
                           style: TextStyle(
                             fontFamily: 'monument',
-                            fontSize: 26,
+                            fontSize: 24,
                             color: Colors.white,
                           ),
                         ),
+                        SizedBox(height: 5),
                         Text(
                           "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
                           style: TextStyle(
@@ -160,10 +161,11 @@ class HomePage extends StatelessWidget {
                         )
                       ],
                     ),
-                    const SizedBox(width: 13),
+                    const SizedBox(width: 30),
                     Image.asset(
                       "./assets/iconWeapons.png",
-                      height: 125,
+                      height: 105,
+                      width: 120,
                     ),
                   ],
                 ),

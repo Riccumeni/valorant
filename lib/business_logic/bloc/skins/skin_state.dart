@@ -10,6 +10,7 @@ class SkinLoading extends SkinState {}
 class SkinSuccess extends SkinState{
   final skinResponse;
   SkinSuccess({required this.skinResponse});
+
 }
 
 class SkinEmpty extends SkinState{}

@@ -66,7 +66,7 @@ class _WeaponsPageState extends State<WeaponsPage> {
                         width: MediaQuery.of(context).size.width,
                         height: 160,
                         decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 40, 40, 40),
+                            color: const Color.fromARGB(255, 45, 45, 45),
                             image: DecorationImage(
                                 alignment: const Alignment(0.8, 0),
                                 scale: 2.4,

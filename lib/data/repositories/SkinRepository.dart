@@ -1,17 +1,15 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/data/models/skin/SkinResponse.dart';
-
 import '../data_providers/ValorantAPI.dart';
 
-class SkinRepository{
+class SkinRepository {
   ValorantAPI _api = ValorantAPI();
 
-  Future<SkinResponse> getWeaponsFilteredByPreferences() async {
+  Future<SkinsResponse> getWeaponsFilteredByPreferences() async {
     final raw = await _api.getSkins();
 
-    final response = SkinResponse.fromJson(jsonDecode(raw));
+    final response = SkinsResponse.fromJson(jsonDecode(raw));
 
     List<Skin> filteredSkins = [];
 
@@ -20,11 +18,11 @@ class SkinRepository{
     List<String> favs = prefs.getStringList("favs") ?? [];
 
     response.data?.forEach((element) {
-        for(String fav in favs){
-          if(fav == element.uuid){
-            filteredSkins.add(element);
-          }
+      for (String fav in favs) {
+        if (fav == element.uuid) {
+          filteredSkins.add(element);
         }
+      }
     });
 
     response.data = filteredSkins;
@@ -61,5 +59,27 @@ class SkinRepository{
     response.data = filteredSkins;
 
     return response;
+  }
+}
+  Future<SkinsResponse> getSkins() async {
+    final raw = await _api.getSkins();
+
+    final response = SkinsResponse.fromJson(jsonDecode(raw));
+
+    List<Skin> skins = [];
+
+    response.data?.forEach((skin) {
+      skins.add(skin);
+    });
+    response.data = skins;
+    return response;
+  }
+
+  Future<SkinResponse> getSkin(String id) async {
+    final String raw = await _api.getSkin(id);
+
+    final SkinResponse skinResponse = SkinResponse.fromJson(jsonDecode(raw));
+
+    return skinResponse;
   }
 }
