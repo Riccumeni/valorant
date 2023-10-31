@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:valorant/business_logic/bloc/favourite/favourite_cubit.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
 import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
 import 'package:valorant/data/models/weapons/WeaponsResponse.dart';
