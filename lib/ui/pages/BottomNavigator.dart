@@ -31,19 +31,7 @@ class _BottomNavigatorState extends State<BottomNavigator> {
     GoRoute(path: '/', builder: (context, state) => const HomePage()),
     GoRoute(
         path: '/champions',
-        pageBuilder: (context, state) {
-          return CustomTransitionPage(
-              key: state.pageKey,
-              child: ChampionList(),
-              transitionsBuilder: (context, animation, secondaryAnimation,
-                  child) {
-                return ScaleTransition(
-                  scale: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
-                  child: child,
-                );
-              }
-          );
-        }
+        builder: (context, state) => ChampionList()
     ),
     GoRoute(
       path: '/champion-detail',
@@ -79,9 +67,9 @@ class _BottomNavigatorState extends State<BottomNavigator> {
     GoRoute(
       path: '/skin-detail/:id',
       name: 'skin-detail',
-      builder: (context, state) => SkinDetail(
-        id: state.pathParameters['id']?? '',
-      ),
+      builder: (context, state) => BlocProvider(create: (context) => SkinCubit(), child: SkinDetail(
+        id: state.pathParameters['id'] ?? '',
+      ),)
     ),
   ]);
 

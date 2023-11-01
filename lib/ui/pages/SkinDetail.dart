@@ -78,7 +78,7 @@ class _SkinDetailState extends State<SkinDetail> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            context.go('/weapon-detail');
+            context.pop();
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -204,6 +204,7 @@ class _SkinDetailState extends State<SkinDetail> {
                               const SizedBox(
                                 height: 25,
                               ),
+
                               for (int i = 0; i < _videoPlayerControllers.length; i++)
                                 SizedBox(
                                   width: double.maxFinite,

@@ -54,7 +54,7 @@ class _MapsPageState extends State<MapsPage> {
                   return InkWell(
                     onTap: () {
                       BlocProvider.of<MapsCubit>(context).setMap(state.mapsResponse!.data![index]);
-                      context.go('/map-detail');
+                      context.push('/map-detail');
                     },
                     child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 5),
@@ -69,10 +69,10 @@ class _MapsPageState extends State<MapsPage> {
                                 // TODO: Scegliere listViewIcon (leggera ma peggiore) o splash (pesante ma migliore)
                                 image: NetworkImage(
                                   state
-                                      .mapsResponse!.data![index]!.listViewIcon,
+                                      .mapsResponse?.data![index].listViewIcon ?? "",
                                 ))),
                         child: Text(
-                          state.mapsResponse!.data![index]!.displayName
+                          state.mapsResponse!.data![index].displayName
                               .toUpperCase(),
                           style: const TextStyle(
                             fontFamily: 'monument',

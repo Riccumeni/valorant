@@ -36,7 +36,7 @@ class _MapDetailState extends State<MapDetail> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            context.go('/maps');
+            context.pop();
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -80,20 +80,18 @@ class _MapDetailState extends State<MapDetail> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if( map.coordinates != null)
                   const SizedBox(height: 30),
-                  if( map.coordinates != null)
                   const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "COORDINATES",
-                      style: TextStyle(
-                        fontFamily: 'monument',
-                        fontSize: 24,
-                        color: Colors.white,
-                      ),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "COORDINATES",
+                    style: TextStyle(
+                      fontFamily: 'monument',
+                      fontSize: 24,
+                      color: Colors.white,
                     ),
                   ),
+                ),
                   const SizedBox(height: 5),
                   if( map.coordinates != null)
                   Align(
@@ -120,9 +118,9 @@ class _MapDetailState extends State<MapDetail> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  const Text(
-                    "A mysterious structure housing an astral conduit radiates with ancient power. Great stone doors provide a variety of movement opportunities and unlock the paths to three mysterious sites.",
-                    style: TextStyle(
+                  Text(
+                    map.narrativeDescription ?? "",
+                    style: const TextStyle(
                       fontFamily: 'poppins',
                       fontSize: 14,
                       color: Colors.white,

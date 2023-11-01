@@ -130,7 +130,7 @@ class _ChampionListState extends State<ChampionList> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              mainAxisExtent: 230,
+                              mainAxisExtent: 250,
                               mainAxisSpacing: 40),
                       itemBuilder: (_, index) {
                         return InkWell(
@@ -153,14 +153,11 @@ class _ChampionListState extends State<ChampionList> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  CachedNetworkImage(
-                                    imageUrl: state.championsResponse!.data![index].bustPortrait ?? "",
-                                  ),
                                   Container(
                                       margin: const EdgeInsets.only(bottom: 20),
                                       child: CachedNetworkImage(
                                     imageUrl: state.championsResponse!
-                                            .data![index]!.bustPortrait ??
+                                            .data![index].bustPortrait ??
                                         "",
                                   )),
                                   Container(
@@ -171,7 +168,7 @@ class _ChampionListState extends State<ChampionList> {
                                         style: TextStyle(
                                             color: ColorsTheme.onPrimary,
                                             fontFamily: 'monument',
-                                            fontSize: 22),
+                                            fontSize: 20),
                                       )),
                                 ],
                               )

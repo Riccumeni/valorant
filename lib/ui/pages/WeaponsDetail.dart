@@ -16,7 +16,7 @@ class WeaponDetail extends StatefulWidget {
   _WeaponDetailState createState() => _WeaponDetailState();
 }
 
-class _WeaponDetailState extends State<WeaponDetail> {
+class _WeaponDetailState extends State<WeaponDetail>{
   int currentIndex = 0;
   bool isRunning = true;
   String state = 'Animation start';
@@ -31,8 +31,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
 
   @override
   void initState()  {
-    // TODO: implement initState
     super.initState();
+
     weapon = BlocProvider.of<WeaponCubit>(context).weapon;
     List<Skin>? skins = weapon.skins;
     skins?.removeWhere((skin) =>
@@ -51,6 +51,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
       skins.insert(0, Skin(displayName: weapon.displayName, uuid: weapon.uuid!));
     }
     weapon.skins = skins;
+
     BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(weapon.skins!);
   }
 
@@ -83,7 +84,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
-              weapon.displayName?.toUpperCase() ?? "",
+              weapon.displayName.toUpperCase() ?? "",
               style: const TextStyle(
                 fontFamily: 'monument',
                 fontSize: 28,
@@ -100,7 +101,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
             BlocBuilder<SkinCubit, SkinState>(
               builder: (context, state) {
                 List<Skin> newSkins = [];
-                if (state is SkinSuccess) {
+                if (state is SkinsSuccess) {
                   newSkins = state.skinResponse.data;
                   //BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(newSkins);
                   return CarouselSlider(
@@ -153,8 +154,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                     },
                                   )
                                     ),
-
-                                    if (skins.indexOf(skin) > 0)
+                                    if (newSkins.indexOf(skin) > 0)
                                       InkWell(
                                         child: const Icon(
                                           Icons.info_outline,
@@ -162,10 +162,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                         ),
                                         onTap: () {
                                           var param1 = skin.uuid;
-                                          context.goNamed('skin-detail',
-                                              pathParameters: {
-                                                'id': param1.toString()
-                                              });
+                                          context.push('/skin-detail/${param1.toString()}');
                                         },
                                       )
                                   ],
@@ -175,11 +172,10 @@ class _WeaponDetailState extends State<WeaponDetail> {
                           ),
                         ),
                       ],
-                    )
                     );
                     }).toList(),
                     options: CarouselOptions(
-                      height: 390,
+                      height: 460,
                       enlargeCenterPage: true,
                       aspectRatio: 16 / 9,
                       autoPlayCurve: Curves.fastOutSlowIn,
@@ -188,7 +184,16 @@ class _WeaponDetailState extends State<WeaponDetail> {
                       onPageChanged: cycleImages,
                     ),
                   );
-                }else{
+                }
+                else if(state is SkinSuccess){
+                  if(GoRouter.of(context).routeInformationProvider.value.uri == "/"){
+                    BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(weapon.skins!);
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                else{
                   return Center(
                     child: CircularProgressIndicator(),
                   );

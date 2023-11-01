@@ -9,7 +9,7 @@ class MapsResponse {
     final data = <Maps>[];
     if (json['data'] != null) {
       json['data'].forEach((v) {
-        data!.add(Maps.fromJson(v));
+        data.add(Maps.fromJson(v));
       });
     }
     return MapsResponse(status: status, data: data);
@@ -46,10 +46,10 @@ class Maps {
   factory Maps.fromJson(Map<String, dynamic> json) {
   final uuid = json['uuid'];
   final displayName = json['displayName'];
-  final narrativeDescription = json['narrativeDescription'];
-  final tacticalDescription = json['tacticalDescription'];
-  final coordinates = json['coordinates'];
-  final displayIcon = json['displayIcon'];
+  final narrativeDescription = json['narrativeDescription'] ?? "";
+  final tacticalDescription = json['tacticalDescription'] ?? "";
+  final coordinates = json['coordinates'] ?? "unknown";
+  final displayIcon = json['displayIcon'] ?? "";
   final listViewIcon = json['listViewIcon'];
   final splash = json['splash'];
   final assetPath = json['assetPath'];

@@ -60,7 +60,7 @@ class _FavouritePageState extends State<FavouritePage> {
             );
           }
 
-          else if(state is SkinSuccess){
+          else if(state is SkinsSuccess){
             List<Skin> skins = state.skinResponse.data;
             return ListView.builder(
                 itemCount: skins.length,

@@ -7,33 +7,23 @@ class SkinRepository {
   ValorantAPI _api = ValorantAPI();
 
   Future<SkinsResponse> getWeaponsFilteredByPreferences() async {
-    final raw = await _api.getSkins();
-
-    final response = SkinsResponse.fromJson(jsonDecode(raw));
-
-    List<Skin> filteredSkins = [];
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favs = prefs.getStringList("favs") ?? [];
 
-    response.data?.forEach((element) {
-      for (String fav in favs) {
-        if (fav == element.uuid) {
-          filteredSkins.add(element);
-        }
-      }
+    List<Skin> skins = [];
+
+    favs.forEach((element) {
+      skins.add(Skin.fromJson(jsonDecode(element)));
     });
 
-    response.data = filteredSkins;
-
-    return response;
+    return SkinsResponse(status: 200, data: skins);
   }
 
-  Future<SkinResponse> getWeaponsFilteredByName(String name) async {
+  Future<SkinsResponse> getWeaponsFilteredByName(String name) async {
     final raw = await _api.getSkins();
 
-    final response = SkinResponse.fromJson(jsonDecode(raw));
+    final response = SkinsResponse.fromJson(jsonDecode(raw));
 
     List<Skin> filteredSkins = [];
 
@@ -60,7 +50,7 @@ class SkinRepository {
 
     return response;
   }
-}
+
   Future<SkinsResponse> getSkins() async {
     final raw = await _api.getSkins();
 

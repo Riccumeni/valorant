@@ -7,8 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/data/models/skin/SkinResponse.dart';
 import 'package:valorant/data/repositories/SkinRepository.dart';
 
-import '../../../data/models/weapons/WeaponsResponse.dart';
-
 part 'skin_state.dart';
 
 class SkinCubit extends Cubit<SkinState> {
@@ -17,128 +15,143 @@ class SkinCubit extends Cubit<SkinState> {
   SkinRepository repository = SkinRepository();
 
   Future<void> getSkinsByWeapon(List<Skin> skins) async {
-
     emit(SkinLoading());
-    try{
+    try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> favsRaw = prefs.getStringList("favs") ?? [];
       List<Map<String, dynamic>> favs = [];
 
-      for(String favRaw in favsRaw){
+      for (String favRaw in favsRaw) {
         favs.add(jsonDecode(favRaw));
       }
 
       List<Skin> newSkins = [];
       for (var element in skins) {
-        if(favs.isNotEmpty){
-          for(Map<String, dynamic> fav in favs){
-            if(element.uuid == fav['uuid']){
+        if (favs.isNotEmpty) {
+          for (Map<String, dynamic> fav in favs) {
+            if (element.uuid == fav['uuid']) {
               element.isFavourite = true;
-            }else{
+            } else {
               element.isFavourite = false;
             }
           }
-        }else{
+        } else {
           element.isFavourite = false;
         }
 
         newSkins.add(element);
       }
-      emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: newSkins)));
-  late Skin skin;
-  Future<void> getSkin(String id) async {
-
-    emit(SkinLoading());
-
-    try{
-      SkinResponse response = await repository.getSkin(id);
-      skin = response.data!;
-      emit(SkinSuccess(skinResponse: response));
-    }catch(e){
+      emit(SkinsSuccess(
+          skinResponse: SkinsResponse(status: 200, data: newSkins)));
+    } catch (e) {
       emit(SkinError());
     }
   }
 
-  Future<void> setPreference(List<Skin> skins, Map<String, dynamic> fav) async{
-    try{
+  late Skin skin;
+
+  Future<void> getSkin(String id) async {
+    emit(SkinLoading());
+
+    try {
+      SkinResponse response = await repository.getSkin(id);
+      skin = response.data!;
+      emit(SkinSuccess(skinResponse: response));
+    } catch (e) {
+      emit(SkinError());
+    }
+  }
+
+  Future<void> setPreference(List<Skin> skins, Map<String, dynamic> fav) async {
+    try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       List<String> rawFavs = prefs.getStringList("favs") ?? [];
       List<Map<String, dynamic>> favs = [];
 
-      for(String rawFav in rawFavs){
+      for (String rawFav in rawFavs) {
         favs.add(jsonDecode(rawFav));
       }
 
-      if(favs.isEmpty){
+      if (favs.isEmpty) {
         await prefs.setStringList("favs", <String>[jsonEncode(fav)]);
         for (Skin element in skins) {
-          if(element.uuid == fav['uuid']) {
+          if (element.uuid == fav['uuid']) {
             element.isFavourite = true;
           }
-          emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
+          emit(SkinsSuccess(
+              skinResponse: SkinsResponse(status: 200, data: skins)));
         }
-      }else{
+      } else {
         bool isInFav = false;
         var index = -1;
         for (var element in favs) {
-          if(element['uuid'] == fav['uuid']){
+          if (element['uuid'] == fav['uuid']) {
             isInFav = true;
             index = favs.indexOf(element);
           }
         }
 
-        if(isInFav){
+        if (isInFav) {
           favs.removeAt(index);
           for (var skin in skins) {
-            if(skin.uuid == fav['uuid']) {
+            if (skin.uuid == fav['uuid']) {
               skin.isFavourite = !skin.isFavourite;
             }
           }
           rawFavs = [];
-          for(Map<String, dynamic> fav in favs){
+          for (Map<String, dynamic> fav in favs) {
             rawFavs.add(jsonEncode(fav));
           }
           await prefs.setStringList("favs", rawFavs);
-          emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
-        }else{
+          emit(SkinsSuccess(
+              skinResponse: SkinsResponse(status: 200, data: skins)));
+        } else {
           favs.add(fav);
           for (var skin in skins) {
-            if(skin.uuid == fav['uuid']) {
+            if (skin.uuid == fav['uuid']) {
               skin.isFavourite = !skin.isFavourite;
             }
           }
           rawFavs = [];
-          for(Map<String, dynamic> fav in favs){
+          for (Map<String, dynamic> fav in favs) {
             rawFavs.add(jsonEncode(fav));
           }
           await prefs.setStringList("favs", rawFavs);
-          emit(SkinSuccess(skinResponse: SkinResponse(status: 200, data: skins)));
+          emit(SkinsSuccess(
+              skinResponse: SkinsResponse(status: 200, data: skins)));
         }
       }
-    }catch(e){
+    } catch (e) {
       var err = e;
-  void setSkin (Skin tappedSkin){
-    skin = tappedSkin;
-  }
-
-
-  Future<void> getSkinsByFavourite() async {
-    emit(SkinLoading());
-
-    try{
-      SkinsResponse response = await repository.getWeaponsFilteredByPreferences();
-      emit(SkinSuccess(skinResponse: response));
-    }catch(e){
       emit(SkinError());
     }
   }
 
-  Future<void> removeSkinByFavourite(SkinsResponse skins, String uuid) async{
+  void setSkin(Skin tappedSkin) {
+    skin = tappedSkin;
+  }
 
+  Future<void> getSkinsByFavourite() async {
     emit(SkinLoading());
 
-    try{
+    try {
+      SkinsResponse response = await repository.getWeaponsFilteredByPreferences();
+      if(response.data?.length == 0){
+        emit(SkinEmpty());
+      }else{
+        emit(SkinsSuccess(skinResponse: response));
+      }
+
+    } catch (e) {
+      emit(SkinError());
+    }
+  }
+
+  Future<void> removeSkinByFavourite(SkinsResponse skins, String uuid) async {
+    emit(SkinLoading());
+
+    try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       List<String> skinFavs = prefs.getStringList("favs") ?? [];
@@ -153,49 +166,46 @@ class SkinCubit extends Cubit<SkinState> {
 
       int index = -1;
 
-      for (int i = 0; i < favs.length; i++){
+      for (int i = 0; i < favs.length; i++) {
         Map<String, dynamic> skinFav = favs[i];
-        if(uuid == skinFav['uuid']){
+        if (uuid == skinFav['uuid']) {
           index = i;
           // skinFavs.remove(skinFav);
         }
       }
 
-      if(index != -1){
+      if (index != -1) {
         favs.removeAt(index);
       }
 
       index = -1;
 
-      for(int i= 0; i < skins.data!.length; i++){
-        if(uuid == skins.data![i].uuid){
+      for (int i = 0; i < skins.data!.length; i++) {
+        if (uuid == skins.data![i].uuid) {
           // skins.data!.remove(skin);
           index = i;
         }
       }
 
-      if(index != -1){
+      if (index != -1) {
         skins.data![index].isFavourite = !skins.data![index].isFavourite;
         skins.data!.removeAt(index);
       }
 
       skinFavs = [];
 
-      for(Map<String, dynamic> fav in favs){
+      for (Map<String, dynamic> fav in favs) {
         skinFavs.add(jsonEncode(fav));
       }
 
       prefs.setStringList("favs", skinFavs);
 
-      if(skinFavs.isEmpty){
+      if (skinFavs.isEmpty) {
         emit(SkinEmpty());
-      }else{
-        emit(SkinSuccess(skinResponse: skins));
+      } else {
+        emit(SkinsSuccess(skinResponse: skins));
       }
-
-
-
-    }catch(e){
+    } catch (e) {
       emit(SkinError());
     }
   }

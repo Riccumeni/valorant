@@ -44,10 +44,10 @@ class HomePage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children:  [
                         Text(
                           "AGENTS",
                           style: TextStyle(
@@ -96,10 +96,10 @@ class HomePage extends StatelessWidget {
                       height: 165,
                     ),
                     const SizedBox(width: 15),
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children:  [
                         Text(
                           "MAPS",
                           style: TextStyle(
@@ -123,7 +123,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                context.go('/maps');
+                context.push('/maps');
               },
             ),
             GestureDetector(
@@ -138,10 +138,10 @@ class HomePage extends StatelessWidget {
                 )),
                 child: Row(
                   children: [
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children:  [
                         Text(
                           "WEAPONS",
                           style: TextStyle(
