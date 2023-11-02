@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
 import 'package:valorant/data/models/skin/SkinResponse.dart';
+import 'package:valorant/ui/themes/Colors.dart';
 
 class FavouritePage extends StatefulWidget {
   const FavouritePage({super.key});
@@ -59,28 +60,40 @@ class _FavouritePageState extends State<FavouritePage> {
               ),
             );
           }
-
           else if(state is SkinsSuccess){
             List<Skin> skins = state.skinResponse.data;
             return ListView.builder(
                 itemCount: skins.length,
                 itemBuilder: (context, index){
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(height: 50,),
-                      Image(image: NetworkImage(skins[index].displayIcon ?? ""), fit: BoxFit.fitWidth,),
-                      const SizedBox(height: 50,),
-                      Text(skins[index].displayName ?? "unknown",
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'monument',
-                            fontSize: 18),
-                        textAlign: TextAlign.center,
+                  return InkWell(
+                    onTap: ()  {
+                      var param1 = skins[index].uuid;
+                      context.push('/skin-detail/${param1.toString()}');
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(10),
+                      padding: EdgeInsets.all(20),
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: ColorsTheme.primary,
+                        borderRadius: BorderRadius.all(Radius.circular(10))
                       ),
-                      const SizedBox(height: 20,),
-                      InkWell(child: Icon(Icons.favorite_outlined, color: Colors.red,), onTap: () => BlocProvider.of<SkinCubit>(context).removeSkinByFavourite(state.skinResponse, state.skinResponse.data[index].uuid),)
-                    ],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                        children: [
+                          Image(image: NetworkImage(skins[index].displayIcon ?? ""), fit: BoxFit.fitWidth,),
+                          Text(skins[index].displayName ?? "unknown",
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'monument',
+                                fontSize: 18),
+                            textAlign: TextAlign.center,
+                          ),
+                          InkWell(child: Icon(Icons.favorite_outlined, color: ColorsTheme.valorant,), onTap: () => BlocProvider.of<SkinCubit>(context).removeSkinByFavourite(state.skinResponse, state.skinResponse.data[index].uuid),)
+                        ],
+                      ),
+                    ),
                   );
               },
             );

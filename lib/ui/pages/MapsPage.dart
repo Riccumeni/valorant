@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:valorant/ui/pages/MapDetail.dart';
+import 'package:valorant/ui/components/ErrorComponent.dart';
+import 'package:valorant/ui/pages/MapDetailPage.dart';
 import '../../business_logic/bloc/map/maps_cubit.dart';
 
 class MapsPage extends StatefulWidget {
@@ -89,27 +90,7 @@ class _MapsPageState extends State<MapsPage> {
               ),
             );
           } else {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.dangerous_outlined,
-                  color: Color.fromARGB(255, 235, 86, 91),
-                  size: 60,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 20),
-                  child: const Text(
-                    "Something was wrong, check your internet connection",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'monument',
-                        fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              ],
-            );
+            return const ErrorComponent();
           }
         }));
   }

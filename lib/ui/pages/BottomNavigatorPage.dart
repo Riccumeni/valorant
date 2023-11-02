@@ -2,20 +2,24 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/map/maps_cubit.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
-import 'package:valorant/ui/pages/ChampionDetail.dart';
-import 'package:valorant/ui/pages/Maps.dart';
-import 'package:valorant/ui/pages/ChampionList.dart';
+import 'package:valorant/business_logic/bloc/video/video_cubit.dart';
+import 'package:valorant/ui/pages/ChampionDetailPage.dart';
+import 'package:valorant/ui/pages/MapsPage.dart';
+import 'package:valorant/ui/pages/ChampionListPage.dart';
 import 'package:valorant/ui/pages/FavouritePage.dart';
 import 'package:valorant/ui/pages/HomePage.dart';
-import 'package:valorant/ui/pages/WeaponsDetail.dart';
-import 'package:valorant/ui/pages/Weapons.dart';
+import 'package:valorant/ui/pages/WeaponsDetailPage.dart';
+import 'package:valorant/ui/pages/WeaponsPage.dart';
 import '../../business_logic/bloc/champion/champions_cubit.dart';
 import '../../business_logic/bloc/weapon/weapon_cubit.dart';
-import 'package:valorant/ui/pages/MapDetail.dart';
-import 'package:valorant/ui/pages/SkinDetail.dart';
+import 'package:valorant/ui/pages/MapDetailPage.dart';
+import 'package:valorant/ui/pages/SkinDetailPage.dart';
+
+import '../themes/Colors.dart';
 
 class BottomNavigator extends StatefulWidget {
   const BottomNavigator({super.key});
@@ -30,24 +34,20 @@ class _BottomNavigatorState extends State<BottomNavigator> {
   static final GoRouter router = GoRouter(initialLocation: "/", routes: [
     GoRoute(path: '/', builder: (context, state) => const HomePage()),
     GoRoute(
-        path: '/champions',
-        builder: (context, state) => ChampionList()
-    ),
+        path: '/champions', builder: (context, state) => ChampionListPage()),
     GoRoute(
       path: '/champion-detail',
       pageBuilder: (context, state) {
         return CustomTransitionPage(
             key: state.pageKey,
-            child: ChampionDetail(),
-            transitionsBuilder: (context, animation, secondaryAnimation,
-                child) {
+            child: ChampionDetailPage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return ScaleTransition(
-                scale: CurveTween(curve: Curves.easeOutCirc).animate(
-                    animation),
+                scale: CurveTween(curve: Curves.easeOutCirc).animate(animation),
                 child: child,
               );
-            }
-        );
+            });
       },
     ),
     GoRoute(
@@ -55,29 +55,38 @@ class _BottomNavigatorState extends State<BottomNavigator> {
       builder: (context, state) => WeaponsPage(),
     ),
     GoRoute(
-        path: '/weapon-detail',
-        builder: (context, state) => WeaponDetail()
-    ),
-    GoRoute(path: '/maps',
-    builder: (context, state) => MapsPage()
-    ),
-    GoRoute(path: '/map-detail',
-    builder: (context, state) => MapDetail()
-    ),
+        path: '/weapon-detail', builder: (context, state) => WeaponDetail()),
+    GoRoute(path: '/maps', builder: (context, state) => MapsPage()),
+    GoRoute(path: '/map-detail', builder: (context, state) => MapDetail()),
     GoRoute(
-      path: '/skin-detail/:id',
-      name: 'skin-detail',
-      builder: (context, state) => BlocProvider(create: (context) => SkinCubit(), child: SkinDetail(
-        id: state.pathParameters['id'] ?? '',
-      ),)
-    ),
+        path: '/skin-detail/:id',
+        name: 'skin-detail',
+        builder: (context, state) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (context) => SkinCubit()),
+                BlocProvider(create: (context) => VideoCubit()),
+              ],
+              child: SkinDetail(
+                id: state.pathParameters['id'] ?? '',
+              ),
+            )),
   ]);
 
   static final GoRouter favouriteRouter =
       GoRouter(initialLocation: '/', routes: [
+    GoRoute(path: '/', builder: (context, state) => FavouritePage()),
     GoRoute(
-        path: '/',
-        builder: (context, state) => FavouritePage()),
+        path: '/skin-detail/:id',
+        name: 'skin-detail',
+        builder: (context, state) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (context) => SkinCubit()),
+                BlocProvider(create: (context) => VideoCubit()),
+              ],
+              child: SkinDetail(
+                id: state.pathParameters['id'] ?? '',
+              ),
+            )),
   ]);
 
   static const TextStyle optionStyle =

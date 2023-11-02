@@ -7,14 +7,16 @@ import 'package:valorant/business_logic/bloc/champion/champions_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:valorant/ui/themes/Colors.dart';
 
-class ChampionList extends StatefulWidget {
-  const ChampionList({Key? key}) : super(key: key);
+import '../components/ErrorComponent.dart';
+
+class ChampionListPage extends StatefulWidget {
+  const ChampionListPage({Key? key}) : super(key: key);
 
   @override
-  State<ChampionList> createState() => _ChampionListState();
+  State<ChampionListPage> createState() => _ChampionListPageState();
 }
 
-class _ChampionListState extends State<ChampionList> {
+class _ChampionListPageState extends State<ChampionListPage> {
 
   final TextEditingController _controller = TextEditingController();
 
@@ -25,7 +27,7 @@ class _ChampionListState extends State<ChampionList> {
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     BlocProvider.of<ChampionsCubit>(context).getChampions();
 
@@ -65,8 +67,7 @@ class _ChampionListState extends State<ChampionList> {
               ),
             ),
           ),
-        )
-        ,
+        ),
         body: Column(
           children: [
             Container(
@@ -178,29 +179,13 @@ class _ChampionListState extends State<ChampionList> {
                       },
                     );
                   } else if (state is LoadingChampionsState) {
-                    return const Center(
+                    return Center(
                       child: CircularProgressIndicator(
-                        color: Color.fromARGB(255, 235, 86, 91),
+                        color: ColorsTheme.valorant,
                       ),
                     );
                   } else {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:  [
-                        Icon(Icons.dangerous_outlined, color: ColorsTheme.valorant, size: 60,),
-                        Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          child: const Text(
-                            "Something was wrong, check your internet connection",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'monument',
-                                fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
-                    );
+                    return const ErrorComponent();
                   }
                 },
               ),

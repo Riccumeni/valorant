@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
+import 'package:valorant/ui/components/ErrorComponent.dart';
+import 'package:valorant/ui/themes/Colors.dart';
 
 class WeaponsPage extends StatefulWidget {
   const WeaponsPage({super.key});
@@ -49,7 +51,9 @@ class _WeaponsPageState extends State<WeaponsPage> {
       body: BlocBuilder<WeaponCubit, WeaponState>(
         builder: (context, state){
           if(state is WeaponsLoading){
-            return const Center(child: CircularProgressIndicator(),);
+            return Center(child: CircularProgressIndicator(
+              color: ColorsTheme.valorant,
+            ),);
           } else if(state is WeaponsSuccess){
 
             var weapons = state.response.data;
@@ -88,22 +92,7 @@ class _WeaponsPageState extends State<WeaponsPage> {
                   );
                 });
           } else{
-              return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:  [
-                const Icon(Icons.dangerous_outlined, color: Color.fromARGB(255,235, 86, 91), size: 60,),
-                Container(
-                  margin: const EdgeInsets.only(top: 20),
-                  child: const Text("Something was wrong, check your internet connection",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'monument',
-                        fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              ],
-            );
+              return const ErrorComponent();
           }
 
         },

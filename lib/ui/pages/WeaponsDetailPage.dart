@@ -16,7 +16,7 @@ class WeaponDetail extends StatefulWidget {
   _WeaponDetailState createState() => _WeaponDetailState();
 }
 
-class _WeaponDetailState extends State<WeaponDetail>{
+class _WeaponDetailState extends State<WeaponDetail> {
   int currentIndex = 0;
   bool isRunning = true;
   String state = 'Animation start';
@@ -30,13 +30,13 @@ class _WeaponDetailState extends State<WeaponDetail>{
   }
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
 
     weapon = BlocProvider.of<WeaponCubit>(context).weapon;
     List<Skin>? skins = weapon.skins;
     skins?.removeWhere((skin) =>
-    skin.displayName == "Random Favorite Skin" ||
+        skin.displayName == "Random Favorite Skin" ||
         skin.displayName == "Standard ${weapon.displayName}");
 
     bool isDisplayNamePresent = false;
@@ -48,7 +48,8 @@ class _WeaponDetailState extends State<WeaponDetail>{
     }
 
     if (!isDisplayNamePresent) {
-      skins.insert(0, Skin(displayName: weapon.displayName, uuid: weapon.uuid!));
+      skins.insert(
+          0, Skin(displayName: weapon.displayName, uuid: weapon.uuid!));
     }
     weapon.skins = skins;
 
@@ -57,7 +58,6 @@ class _WeaponDetailState extends State<WeaponDetail>{
 
   @override
   Widget build(BuildContext context) {
-
     bool range1 = weapon.weaponStats?.damageRanges?.length == 1;
     bool range2 = weapon.weaponStats?.damageRanges?.length == 2;
     bool range3 = weapon.weaponStats?.damageRanges?.length == 3;
@@ -103,76 +103,83 @@ class _WeaponDetailState extends State<WeaponDetail>{
                 List<Skin> newSkins = [];
                 if (state is SkinsSuccess) {
                   newSkins = state.skinResponse.data;
-                  //BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(newSkins);
                   return CarouselSlider(
                     items: newSkins.map((skin) {
                       return Column(
-                      children: [
-                        SizedBox(
-                          height: 320,
-                          child: Image.network(
-                              skin.chromas?[0].fullRender ?? weapon.displayIcon,
-                              fit: BoxFit.contain),
-                        ),
-                        SizedBox(
-                          width: double.maxFinite,
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  skin.displayName?.toUpperCase() ?? "",
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontFamily: 'monument',
-                                      fontSize: 16,
-                                      color: Colors.white),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      width: 50,
-                                      child: InkWell(
-                                    child: Icon(
-                                      skin.isFavourite
-                                          ? Icons.favorite_outlined
-                                          : Icons.favorite_border,
-                                      color: skin.isFavourite
-                                          ? Colors.red
-                                          : Colors.grey,
-                                    ),
-                                    onTap: () async {
-                                      bool isFavourite = skin.isFavourite;
-                                      BlocProvider.of<SkinCubit>(context).setPreference(newSkins, skin.toJson());
-                                    },
-                                  )
-                                    ),
-                                    if (newSkins.indexOf(skin) > 0)
-                                      InkWell(
-                                        child: const Icon(
-                                          Icons.info_outline,
-                                          color: Colors.grey,
-                                        ),
-                                        onTap: () {
-                                          var param1 = skin.uuid;
-                                          context.push('/skin-detail/${param1.toString()}');
-                                        },
-                                      )
-                                  ],
-                                )
-                              ],
+                        children: [
+                          SizedBox(
+                            height: 320,
+                            child: Image.network(
+                                skin.chromas?[0].fullRender ??
+                                    weapon.displayIcon,
+                                fit: BoxFit.contain),
+                          ),
+                          SizedBox(
+                            width: double.maxFinite,
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    skin.displayName?.toUpperCase() ?? "",
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                        fontFamily: 'monument',
+                                        fontSize: 16,
+                                        color: Colors.white),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  if (newSkins.indexOf(skin) > 0)
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                            width: 50,
+                                            child: InkWell(
+                                              child: Icon(
+                                                skin.isFavourite
+                                                    ? Icons.favorite_outlined
+                                                    : Icons.favorite_border,
+                                                color: skin.isFavourite
+                                                    ? Colors.red
+                                                    : Colors.grey,
+                                              ),
+                                              onTap: () async {
+                                                bool isFavourite =
+                                                    skin.isFavourite;
+                                                BlocProvider.of<SkinCubit>(
+                                                        context)
+                                                    .setPreference(newSkins,
+                                                        skin.toJson());
+                                              },
+                                            )),
+                                        InkWell(
+                                          child: const Icon(
+                                            Icons.info_outline,
+                                            color: Colors.grey,
+                                          ),
+                                          onTap: () {
+                                            var param1 = skin.uuid;
+                                            context.push(
+                                                '/skin-detail/${param1.toString()}');
+                                          },
+                                        )
+                                      ],
+                                    )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
+                        ],
+                      );
                     }).toList(),
                     options: CarouselOptions(
                       height: 460,
@@ -184,21 +191,12 @@ class _WeaponDetailState extends State<WeaponDetail>{
                       onPageChanged: cycleImages,
                     ),
                   );
-                }
-                else if(state is SkinSuccess){
-                  if(GoRouter.of(context).routeInformationProvider.value.uri == "/"){
-                    BlocProvider.of<SkinCubit>(context).getSkinsByWeapon(weapon.skins!);
-                  }
-                  return Center(
-                    child: CircularProgressIndicator(),
+                } else {
+                  return const SizedBox(
+                    height: 320,
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                else{
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
               },
             ),
             if (weapon.shopData?.category != null)
@@ -248,7 +246,6 @@ class _WeaponDetailState extends State<WeaponDetail>{
                             ),
                           ],
                         ),
-
                       if (weapon.shopData?.cost != null)
                         Column(
                           children: [

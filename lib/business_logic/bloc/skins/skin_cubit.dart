@@ -14,6 +14,7 @@ class SkinCubit extends Cubit<SkinState> {
 
   SkinRepository repository = SkinRepository();
 
+
   Future<void> getSkinsByWeapon(List<Skin> skins) async {
     emit(SkinLoading());
     try {

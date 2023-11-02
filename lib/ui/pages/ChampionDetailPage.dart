@@ -7,14 +7,14 @@ import 'package:valorant/data/models/champion/ChampionsResponse.dart';
 import 'package:valorant/ui/components/Ability.dart';
 import 'package:valorant/PaintTriangle.dart';
 
-class ChampionDetail extends StatefulWidget {
-  const ChampionDetail({Key? key}) : super(key: key);
+class ChampionDetailPage extends StatefulWidget {
+  const ChampionDetailPage({Key? key}) : super(key: key);
 
   @override
-  State<ChampionDetail> createState() => _ChampionDetailState();
+  State<ChampionDetailPage> createState() => _ChampionDetailPageState();
 }
 
-class _ChampionDetailState extends State<ChampionDetail> with TickerProviderStateMixin{
+class _ChampionDetailPageState extends State<ChampionDetailPage> with TickerProviderStateMixin{
   late AnimationController animation;
   late Animation<double> _fadeInFadeOut;
 
@@ -131,11 +131,8 @@ class _ChampionDetailState extends State<ChampionDetail> with TickerProviderStat
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-      body: WillPopScope(
-        onWillPop: () async{
-          //context.pop();
-          return true;
-        },
+      body: GestureDetector(
+        onHorizontalDragEnd: (end) => context.pop(),
         child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(

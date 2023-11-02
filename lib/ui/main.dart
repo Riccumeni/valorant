@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:valorant/ui/pages/BottomNavigator.dart';
+import 'package:valorant/ui/pages/BottomNavigatorPage.dart';
 
 
 Map<int, Color> color = {

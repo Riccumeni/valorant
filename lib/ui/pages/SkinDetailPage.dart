@@ -2,9 +2,11 @@ import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
-import 'package:valorant/data/models/skin/SkinResponse.dart';
+import 'package:valorant/business_logic/bloc/video/video_cubit.dart';
+import 'package:valorant/ui/themes/Colors.dart';
 
 class SkinDetail extends StatefulWidget {
   String id;
@@ -15,15 +17,13 @@ class SkinDetail extends StatefulWidget {
 }
 
 class _SkinDetailState extends State<SkinDetail> {
-  List<VideoPlayerController> _videoPlayerControllers = [];
-  List<CustomVideoPlayerController>? _customVideoPlayerControllers = [];
-  late CustomVideoPlayerWebController _customVideoPlayerWebController;
-
+  CustomVideoPlayerController? _customVideoPlayerController;
   final CustomVideoPlayerSettings _customVideoPlayerSettings =
   const CustomVideoPlayerSettings(showSeekButtons: true);
 
   int selectedChromaIndex = 0;
   int selectedLevelsIndex = 0;
+  int selectedVideoIndex = 0;
 
   bool isOnPress = false;
   void onPress() {
@@ -40,69 +40,47 @@ class _SkinDetailState extends State<SkinDetail> {
   void initState() {
     super.initState();
     BlocProvider.of<SkinCubit>(context).getSkin(widget.id).then((value) => {
-
-      for(Levels level in BlocProvider.of<SkinCubit>(context).skin.levels!){
-        if(level.streamedVideo != null){
-          _videoPlayerControllers.add(VideoPlayerController.network(
-            level.streamedVideo!,
-          )..initialize().then((value) => setState(() {}))),
-        }
-      },
-
-      for(VideoPlayerController videoController in _videoPlayerControllers){
-        _customVideoPlayerControllers?.add(CustomVideoPlayerController(
-          context: context,
-          videoPlayerController: videoController,
-          customVideoPlayerSettings: _customVideoPlayerSettings,
-        ))
-      }
-
+    BlocProvider.of<VideoCubit>(context).setVideo(context, BlocProvider.of<SkinCubit>(context).skin.levels![selectedVideoIndex].streamedVideo)
     });
-
   }
 
   @override
   void dispose() {
-    for(CustomVideoPlayerController controller in _customVideoPlayerControllers!){
-      controller.dispose();
-    }
+    _customVideoPlayerController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
       appBar: AppBar(
-        centerTitle: true,
         elevation: 0,
+        toolbarHeight: 70,
+        backgroundColor: const Color.fromARGB(255, 38, 38, 38),
         leading: IconButton(
           onPressed: () {
             context.pop();
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
-        toolbarHeight: 64,
-        backgroundColor: const Color.fromARGB(255, 38, 38, 38),
         title: Center(
           child: Container(
-            margin: const EdgeInsets.only(top: 0, right: 60),
-            child: const Text(
-              "SKIN DETAIL",
-              style: TextStyle(
-                fontFamily: 'monument',
-                fontSize: 28,
-              ),
+            margin: const EdgeInsets.only(top: 30, right: 60),
+            child: SvgPicture.asset(
+              "./assets/valorant-logo.svg",
+              width: 70,
+              height: 70,
             ),
           ),
         ),
       ),
+      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: BlocBuilder<SkinCubit, SkinState>(
           builder: (context, state) {
             if (state is SkinLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator(color: ColorsTheme.valorant,));
             } else if (state is SkinSuccess) {
               var skin = state.skinResponse.data;
               return Column(
@@ -204,32 +182,69 @@ class _SkinDetailState extends State<SkinDetail> {
                               const SizedBox(
                                 height: 25,
                               ),
+                                BlocBuilder<VideoCubit, VideoState>(
 
-                              for (int i = 0; i < _videoPlayerControllers.length; i++)
-                                SizedBox(
-                                  width: double.maxFinite,
-                                  height: 330,
-                                  child: Column(
-                                    children: [
-                                      _customVideoPlayerControllers?[i] != null
-                                          ? CustomVideoPlayer(
-                                        customVideoPlayerController:
-                                        _customVideoPlayerControllers![i],
-                                      ) : Text(""),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 30),
-                                        child: Text(
-                                          skin.levels[i].displayName,
-                                          style: const TextStyle(
-                                            fontFamily: 'monument',
-                                            fontSize: 22,
-                                            color: Colors.white,
+                                    builder: (context, state){
+                                    if(state is VideoSuccess){
+                                      return Container(
+                                        height: 250,
+                                        child: CustomVideoPlayer(
+                                          customVideoPlayerController: state.videoPlayerController,
+                                        ),
+                                      );
+                                    } else if(state is VideoLoading){
+                                      return SizedBox(
+                                        height: 250,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            color: ColorsTheme.valorant,
+                                          ),
+                                        ),
+                                      );
+                                    }else if(state is VideoError){
+                                      return Text("Error loading video");
+                                    }else{
+                                      return SizedBox();
+                                    }
+                                  }
+                                ),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  if(skin.levels.isNotEmpty && skin.levels[0].streamedVideo != null )
+                                    for (int i = 0; i < skin.levels.length; i++)
+                                      InkWell(
+                                        onTap: (){
+                                          setState(() {
+                                            selectedVideoIndex = i;
+                                            _customVideoPlayerController?.dispose();
+                                            BlocProvider.of<VideoCubit>(context).setVideo(context, skin.levels[selectedVideoIndex].streamedVideo);
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            color: selectedVideoIndex == i ? Colors.white : Colors.grey.shade600,
+                                          ),
+                                          padding: EdgeInsets.all(5),
+                                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                                          width: 50,
+                                          height: 30,
+                                          child: Center(
+                                            child: Text(
+                                              (i + 1).toString(),
+                                              style: TextStyle(
+                                                fontFamily: 'monument',
+                                                fontSize: 18,
+                                                color: selectedVideoIndex == i ? Colors.black : Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       )
-                                    ],
-                                  ),
-                                )
+                                  ],
+                              )
                             ],
                           ),
                         ),
