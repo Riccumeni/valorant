@@ -114,7 +114,7 @@ class _ChampionDetailPageState extends State<ChampionDetailPage> with TickerProv
           onPressed: () {
             context.pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon:  Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
         ),
         toolbarHeight: 70,
         title: Center(
@@ -122,9 +122,10 @@ class _ChampionDetailPageState extends State<ChampionDetailPage> with TickerProv
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
               champ.displayName?.toUpperCase() ?? "",
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'monument',
                 fontSize: 28,
+                color: Theme.of(context).colorScheme.onPrimaryContainer
               ),
             ),
           ),

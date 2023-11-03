@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
 import 'package:valorant/ui/components/ErrorComponent.dart';
-import 'package:valorant/ui/themes/Colors.dart';
 
 class WeaponsPage extends StatefulWidget {
   const WeaponsPage({super.key});
@@ -35,7 +33,7 @@ class _WeaponsPageState extends State<WeaponsPage> {
           onPressed: () {
             context.pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer),
         ),
         title: Center(
           child: Container(
@@ -52,7 +50,7 @@ class _WeaponsPageState extends State<WeaponsPage> {
         builder: (context, state){
           if(state is WeaponsLoading){
             return Center(child: CircularProgressIndicator(
-              color: ColorsTheme.valorant,
+              color: Theme.of(context).colorScheme.primary,
             ),);
           } else if(state is WeaponsSuccess){
 

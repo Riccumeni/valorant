@@ -6,6 +6,8 @@ class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    bool exit = false;
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 30, 30, 30),
       appBar: AppBar(
@@ -23,32 +25,62 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
+      body: WillPopScope(
+        onWillPop: () async{
 
-            HomeCard(
-                title: "AGENTS",
-                description: "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
-                imageUrl: "./assets/agents.png",
-                destination: "/champions"
-            ),
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Exit Dialog'),
+                content: Text('You would close the app?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('NO'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      exit = true;
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('YES'),
+                  ),
+                ],
+              );
+            },
+          );
 
-            HomeCard(
-                title: "MAPS",
-                description: "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
-                imageUrl: "./assets/iconMaps.png",
-                destination: "/maps",
-              rotate: true,
-            ),
+          return exit;
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              HomeCard(
+                  title: "AGENTS",
+                  description: "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
+                  imageUrl: "./assets/agents.png",
+                  destination: "/champions"
+              ),
 
-            HomeCard(
-                title: "WEAPONS",
-                description: "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
-                imageUrl: "./assets/iconWeapons.png",
-                destination: "/weapons"
-            ),
-          ],
+              HomeCard(
+                  title: "MAPS",
+                  description: "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
+                  imageUrl: "./assets/iconMaps.png",
+                  destination: "/maps",
+                rotate: true,
+              ),
+
+              HomeCard(
+                  title: "WEAPONS",
+                  description: "Find more ways to plant \nthe Spike and style on your\nenemies with scrappers,\nstrategists, and hunters of\nevery description.",
+                  imageUrl: "./assets/iconWeapons.png",
+                  destination: "/weapons"
+              ),
+            ],
+          ),
         ),
       ),
     );

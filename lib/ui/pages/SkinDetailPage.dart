@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
 import 'package:valorant/business_logic/bloc/video/video_cubit.dart';
-import 'package:valorant/ui/themes/Colors.dart';
 
 class SkinDetail extends StatefulWidget {
   String id;
@@ -17,9 +16,7 @@ class SkinDetail extends StatefulWidget {
 }
 
 class _SkinDetailState extends State<SkinDetail> {
-  CustomVideoPlayerController? _customVideoPlayerController;
-  final CustomVideoPlayerSettings _customVideoPlayerSettings =
-  const CustomVideoPlayerSettings(showSeekButtons: true);
+
 
   int selectedChromaIndex = 0;
   int selectedLevelsIndex = 0;
@@ -46,7 +43,6 @@ class _SkinDetailState extends State<SkinDetail> {
 
   @override
   void dispose() {
-    _customVideoPlayerController?.dispose();
     super.dispose();
   }
 
@@ -56,12 +52,12 @@ class _SkinDetailState extends State<SkinDetail> {
       appBar: AppBar(
         elevation: 0,
         toolbarHeight: 70,
-        backgroundColor: const Color.fromARGB(255, 38, 38, 38),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         leading: IconButton(
           onPressed: () {
             context.pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
         ),
         title: Center(
           child: Container(
@@ -74,13 +70,17 @@ class _SkinDetailState extends State<SkinDetail> {
           ),
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: BlocBuilder<SkinCubit, SkinState>(
           builder: (context, state) {
             if (state is SkinLoading) {
-              return Center(child: CircularProgressIndicator(color: ColorsTheme.valorant,));
+              return SizedBox(
+                height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary,))
+              );
             } else if (state is SkinSuccess) {
               var skin = state.skinResponse.data;
               return Column(
@@ -197,12 +197,14 @@ class _SkinDetailState extends State<SkinDetail> {
                                         height: 250,
                                         child: Center(
                                           child: CircularProgressIndicator(
-                                            color: ColorsTheme.valorant,
+                                            color: Theme.of(context).colorScheme.primary,
                                           ),
                                         ),
                                       );
                                     }else if(state is VideoError){
-                                      return Text("Error loading video");
+                                      return const SizedBox(
+                                        height: 250,
+                                          child: Center(child: Text("Error loading video", style: TextStyle(fontFamily: "monument", fontSize: 16, color: Colors.white),)));
                                     }else{
                                       return SizedBox();
                                     }
@@ -218,7 +220,6 @@ class _SkinDetailState extends State<SkinDetail> {
                                         onTap: (){
                                           setState(() {
                                             selectedVideoIndex = i;
-                                            _customVideoPlayerController?.dispose();
                                             BlocProvider.of<VideoCubit>(context).setVideo(context, skin.levels[selectedVideoIndex].streamedVideo);
                                           });
                                         },

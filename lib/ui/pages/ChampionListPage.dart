@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/champion/champions_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:valorant/ui/themes/Colors.dart';
 
 import '../components/ErrorComponent.dart';
 
@@ -52,11 +51,11 @@ class _ChampionListPageState extends State<ChampionListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-        backgroundColor: ColorsTheme.background,
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           toolbarHeight: 70,
-          backgroundColor: ColorsTheme.primary,
-          leading: InkWell(child: const Icon(Icons.arrow_back_ios_new), onTap: () => context.pop(),),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          leading: InkWell(child:  Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.onPrimaryContainer), onTap: () => context.pop(),),
           title: Center(
             child: Container(
               margin: const EdgeInsets.only(top: 30, right: 60),
@@ -167,7 +166,7 @@ class _ChampionListPageState extends State<ChampionListPage> {
                                         "${state.championsResponse!.data![index].displayName}"
                                             .toUpperCase(),
                                         style: TextStyle(
-                                            color: ColorsTheme.onPrimary,
+                                            color: Theme.of(context).colorScheme.onPrimary,
                                             fontFamily: 'monument',
                                             fontSize: 20),
                                       )),
@@ -181,7 +180,7 @@ class _ChampionListPageState extends State<ChampionListPage> {
                   } else if (state is LoadingChampionsState) {
                     return Center(
                       child: CircularProgressIndicator(
-                        color: ColorsTheme.valorant,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     );
                   } else {

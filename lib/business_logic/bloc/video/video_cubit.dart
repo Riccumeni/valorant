@@ -15,20 +15,24 @@ class VideoCubit extends Cubit<VideoState> {
       if (url.isEmpty) throw Error();
       const settings = CustomVideoPlayerSettings(showSeekButtons: true);
 
-      VideoPlayerController videoPlayerController = VideoPlayerController.network(url)..initialize();
-
-      if(customVideoPlayerController == null){
-        customVideoPlayerController = CustomVideoPlayerController(context: context, videoPlayerController: videoPlayerController, customVideoPlayerSettings: settings);
-      }else{
+      if(customVideoPlayerController != null){
         customVideoPlayerController?.dispose();
-        customVideoPlayerController = CustomVideoPlayerController(context: context, videoPlayerController: videoPlayerController, customVideoPlayerSettings: settings);
       }
 
-      Future.delayed(Duration(seconds: 1), (){
-        emit(VideoSuccess(videoPlayerController: customVideoPlayerController!));
+      VideoPlayerController videoPlayerController = VideoPlayerController.network(url);
+
+      await videoPlayerController.initialize();
+
+      customVideoPlayerController = CustomVideoPlayerController(context: context, videoPlayerController: videoPlayerController, customVideoPlayerSettings: settings);
+
+      emit(VideoSuccess(videoPlayerController: customVideoPlayerController!));
+
+      /*
+      Future.delayed(Duration(seconds: 2), (){
+
       });
 
-
+       */
     }catch(e){
       if(url == null || url.isEmpty){
         emit(VideoEmpty());

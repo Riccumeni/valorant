@@ -19,7 +19,6 @@ import '../../business_logic/bloc/weapon/weapon_cubit.dart';
 import 'package:valorant/ui/pages/MapDetailPage.dart';
 import 'package:valorant/ui/pages/SkinDetailPage.dart';
 
-import '../themes/Colors.dart';
 
 class BottomNavigator extends StatefulWidget {
   const BottomNavigator({super.key});
@@ -30,6 +29,23 @@ class BottomNavigator extends StatefulWidget {
 
 class _BottomNavigatorState extends State<BottomNavigator> {
   int _selectedIndex = 0;
+
+  static const ColorScheme theme = ColorScheme(
+      brightness: Brightness.dark,
+      primary:  Color.fromARGB(255,235, 86, 91),
+      onPrimary: Color.fromARGB(255, 30, 30, 30),
+      primaryContainer: Color.fromARGB(255, 38, 38, 38),
+      onPrimaryContainer: Color.fromARGB(255, 255, 255, 255),
+      error: Color.fromARGB(255,235, 86, 91),
+      onError: Color.fromARGB(255, 255, 255, 255),
+      background: Color.fromARGB(255, 30, 30, 30),
+      onBackground: Color.fromARGB(255, 255, 255, 255),
+      secondary: Color.fromARGB(255, 38, 38, 38),
+      secondaryContainer: Color.fromARGB(255, 38, 38, 38),
+      onSecondary: Color.fromARGB(255, 38, 38, 38),
+      surface: Color.fromARGB(255, 38, 38, 38),
+      onSurface: Color.fromARGB(255, 38, 38, 38)
+  );
 
   static final GoRouter router = GoRouter(initialLocation: "/", routes: [
     GoRoute(path: '/', builder: (context, state) => const HomePage()),
@@ -89,14 +105,17 @@ class _BottomNavigatorState extends State<BottomNavigator> {
             )),
   ]);
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
   static final List<Widget> _widgetOptions = <Widget>[
     MaterialApp.router(
+      theme: ThemeData(
+        colorScheme: theme,
+      ),
       routerConfig: router,
     ),
     MaterialApp.router(
+      theme: ThemeData(
+        colorScheme: theme,
+      ),
       routerConfig: favouriteRouter,
     )
   ];
@@ -109,6 +128,8 @@ class _BottomNavigatorState extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Center(
         child: MultiBlocProvider(
@@ -134,7 +155,7 @@ class _BottomNavigatorState extends State<BottomNavigator> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 239, 88, 90),
+        selectedItemColor: Color.fromARGB(255,235, 86, 91),
         onTap: _onItemTapped,
       ),
     );

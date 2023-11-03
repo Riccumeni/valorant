@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../themes/Colors.dart';
-
 class ErrorComponent extends StatelessWidget {
   const ErrorComponent({super.key});
 
@@ -11,7 +9,7 @@ class ErrorComponent extends StatelessWidget {
      return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children:  [
-        Icon(Icons.dangerous_outlined, color: ColorsTheme.valorant, size: 60,),
+        Icon(Icons.dangerous_outlined, color: Theme.of(context).colorScheme.error, size: 60,),
         Container(
           margin: const EdgeInsets.only(top: 20),
           child: const Text(

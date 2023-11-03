@@ -25,16 +25,16 @@ class _MapsPageState extends State<MapsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: const Color.fromARGB(255, 38, 38, 38),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           toolbarHeight: 70,
           leading: IconButton(
             onPressed: () {
               context.go('/');
             },
-            icon: const Icon(Icons.arrow_back_ios),
+            icon:  Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
           ),
           title: Center(
             child: Container(

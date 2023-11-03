@@ -6,7 +6,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
 import 'package:valorant/business_logic/bloc/weapon/weapon_cubit.dart';
 import 'package:valorant/data/models/weapons/WeaponsResponse.dart';
-import '../../business_logic/bloc/skins/skin_cubit.dart';
+import 'package:valorant/ui/components/ProgressStat.dart';
 import '../../data/models/skin/SkinResponse.dart';
 
 class WeaponDetail extends StatefulWidget {
@@ -68,7 +68,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
     }
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -76,18 +76,19 @@ class _WeaponDetailState extends State<WeaponDetail> {
           onPressed: () {
             context.pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
         ),
         toolbarHeight: 64,
-        backgroundColor: const Color.fromARGB(255, 38, 38, 38),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Center(
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
               weapon.displayName.toUpperCase() ?? "",
-              style: const TextStyle(
+              style:  TextStyle(
                 fontFamily: 'monument',
                 fontSize: 28,
+                color: Theme.of(context).colorScheme.onPrimaryContainer
               ),
             ),
           ),
@@ -128,7 +129,8 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                     style: const TextStyle(
                                         fontFamily: 'monument',
                                         fontSize: 16,
-                                        color: Colors.white),
+                                        color: Colors.white
+                                    ),
                                   ),
                                   const SizedBox(
                                     height: 20,
@@ -276,10 +278,10 @@ class _WeaponDetailState extends State<WeaponDetail> {
                   if (range1 || range2 || range3)
                     Column(
                       children: [
-                        Column(
+                        const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
+                          children:  [
                             SizedBox(height: 25),
                             Align(
                               alignment: Alignment.centerLeft,
@@ -544,6 +546,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             ),
                           ],
                         ),
+
                         const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -555,255 +558,47 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 15),
-                        Row(
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Reload Time Seconds: ",
-                                style: TextStyle(
-                                  fontFamily: 'monument',
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              weapon.weaponStats?.reloadTimeSeconds
-                                      .toString() ??
-                                  "",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'poppins',
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
+
+                        ProgressStat(
+                            category: "Reload Time Seconds",
+                            value: weapon.weaponStats?.reloadTimeSeconds.toString() ?? "",
+                            maxValue: 5.0
                         ),
-                        const SizedBox(height: 10),
-                        LinearPercentIndicator(
-                          padding: const EdgeInsets.all(0),
-                          backgroundColor: Colors.grey,
-                          lineHeight: 15,
-                          center: Text(
-                              weapon.weaponStats?.reloadTimeSeconds
-                                      .toString() ??
-                                  "",
-                              style: const TextStyle(fontSize: 11)),
-                          progressColor: Colors.white,
-                          barRadius: const Radius.circular(10),
-                          percent: percent(
-                                  double.parse(weapon
-                                          .weaponStats?.reloadTimeSeconds
-                                          .toString() ??
-                                      ""),
-                                  5.0) /
-                              100,
-                          animation: true,
-                          animationDuration: 1000,
+
+                        const SizedBox(height: 20),
+
+                        ProgressStat(
+                            category: "Magazine Size",
+                            value: weapon.weaponStats?.magazineSize.toString() ?? "",
+                            maxValue: 100.0
                         ),
+
                         const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Magazine Size: ",
-                                style: TextStyle(
-                                  fontFamily: 'monument',
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              weapon.weaponStats?.magazineSize.toString() ?? "",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'poppins',
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        LinearPercentIndicator(
-                          padding: const EdgeInsets.all(0),
-                          backgroundColor: Colors.grey,
-                          lineHeight: 15,
-                          center: Text(
-                              weapon.weaponStats?.magazineSize.toString() ?? "",
-                              style: const TextStyle(fontSize: 11)),
-                          progressColor: Colors.white,
-                          barRadius: const Radius.circular(10),
-                          percent: percent(
-                                  double.parse(weapon.weaponStats?.magazineSize
-                                          .toString() ??
-                                      ""),
-                                  100.0) /
-                              100,
-                          animation: true,
-                          animationDuration: 1000,
-                        ),
-                        const SizedBox(height: 20),
+
                         if (weapon.weaponStats?.adsStats != null)
-                          Row(
-                            children: [
-                              const Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Zoom Multiplier: ",
-                                  style: TextStyle(
-                                    fontFamily: 'monument',
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                weapon.weaponStats?.adsStats?.zoomMultiplier
-                                        .toString() ??
-                                    "",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'poppins',
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
+
+                          ProgressStat(
+                              category: "Zoom Multiplier",
+                              value: weapon.weaponStats?.adsStats?.zoomMultiplier.toString() ?? "",
+                              maxValue: 3.5
                           ),
-                        const SizedBox(height: 10),
-                        if (weapon.weaponStats?.adsStats != null)
-                          LinearPercentIndicator(
-                            padding: const EdgeInsets.all(0),
-                            backgroundColor: Colors.grey,
-                            lineHeight: 15,
-                            center: Text(
-                                weapon.weaponStats?.adsStats?.zoomMultiplier
-                                        .toString() ??
-                                    "",
-                                style: const TextStyle(fontSize: 11)),
-                            progressColor: Colors.white,
-                            barRadius: const Radius.circular(10),
-                            percent: percent(
-                                    double.parse(weapon.weaponStats?.adsStats
-                                            ?.zoomMultiplier
-                                            .toString() ??
-                                        ""),
-                                    3.5) /
-                                100,
-                            animation: true,
-                            animationDuration: 1000,
+
+                          const SizedBox(height: 20),
+
+                          ProgressStat(
+                              category: "Fire Rate",
+                              value: weapon.weaponStats?.adsStats?.fireRate.round().toString() ?? "",
+                              maxValue: 16.0
                           ),
-                        const SizedBox(height: 20),
-                        if (weapon.weaponStats?.adsStats != null)
-                          Row(
-                            children: [
-                              const Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Fire Rate: ",
-                                  style: TextStyle(
-                                    fontFamily: 'monument',
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                weapon.weaponStats?.adsStats?.fireRate
-                                        .round()
-                                        .toString() ??
-                                    "",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'poppins',
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        if (weapon.weaponStats?.adsStats != null)
-                          LinearPercentIndicator(
-                            padding: const EdgeInsets.all(0),
-                            backgroundColor: Colors.grey,
-                            lineHeight: 15,
-                            center: Text(
-                                weapon.weaponStats?.adsStats?.fireRate
-                                        .round()
-                                        .toString() ??
-                                    "",
-                                style: const TextStyle(fontSize: 11)),
-                            progressColor: Colors.white,
-                            barRadius: const Radius.circular(10),
-                            percent: percent(
-                                    double.parse(weapon
-                                            .weaponStats?.adsStats?.fireRate
-                                            .round()
-                                            .toString() ??
-                                        ""),
-                                    16.0) /
-                                100,
-                            animation: true,
-                            animationDuration: 1000,
-                          ),
-                        const SizedBox(height: 20),
-                        if (weapon.weaponStats?.adsStats != null)
-                          Row(
-                            children: [
-                              const Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "First Bullet Accuracy: ",
-                                  style: TextStyle(
-                                    fontFamily: 'monument',
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                weapon.weaponStats?.firstBulletAccuracy
-                                        .toString() ??
-                                    "",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'poppins',
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        if (weapon.weaponStats?.adsStats != null)
-                          LinearPercentIndicator(
-                            padding: const EdgeInsets.all(0),
-                            backgroundColor: Colors.grey,
-                            lineHeight: 15,
-                            center: Text(
-                                weapon.weaponStats?.firstBulletAccuracy
-                                        .toString() ??
-                                    "",
-                                style: const TextStyle(fontSize: 11)),
-                            progressColor: Colors.white,
-                            barRadius: const Radius.circular(10),
-                            percent: percent(
-                                    double.parse(
-                                      weapon.weaponStats?.firstBulletAccuracy
-                                              .toString() ??
-                                          "",
-                                    ),
-                                    5.0) /
-                                100,
-                            animation: true,
-                            animationDuration: 1000,
+
+                          const SizedBox(height: 20),
+
+                          ProgressStat(
+                              category: "First Bullet Accuracy",
+                              value: weapon.weaponStats?.firstBulletAccuracy.toString() ?? "",
+                              maxValue: 5.0
                           ),
                       ],
                     ),

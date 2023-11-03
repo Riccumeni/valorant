@@ -27,28 +27,28 @@ class _MapDetailState extends State<MapDetail> {
 
   @override
   Widget build(BuildContext context) {
-    // Usa l'oggetto `maps` per visualizzare i dettagli delle mappe selezionate
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
             context.pop();
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
         ),
-        toolbarHeight: 100,
+        toolbarHeight: 70,
         title: Center(
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
               map.displayName.toUpperCase(),
-              style: const TextStyle(
+              style:  TextStyle(
                 fontFamily: 'monument',
                 fontSize: 28,
+                color: Theme.of(context).colorScheme.onPrimaryContainer
               ),
             ),
           ),
