@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -113,7 +114,13 @@ class _FavouritePageState extends State<FavouritePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
 
                           children: [
-                            Image(image: NetworkImage(skins[index].displayIcon ?? ""), fit: BoxFit.fitWidth,),
+                            CachedNetworkImage(
+                                fit: BoxFit.fitWidth,
+                                imageUrl: skins[index].displayIcon ?? "",
+                                placeholder: (context, url) => CircularProgressIndicator(color: Theme.of(context).colorScheme.primary,),
+                                errorWidget: (context, url, error) =>  Icon(Icons.dangerous_outlined, size: 40, color: Theme.of(context).colorScheme.primary,),
+                              ),
+
                             Text(skins[index].displayName ?? "unknown",
                               style: const TextStyle(
                                   color: Colors.white,

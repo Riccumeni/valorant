@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
 import 'package:valorant/business_logic/bloc/video/video_cubit.dart';
+import 'package:valorant/ui/components/ErrorComponent.dart';
 
 class SkinDetail extends StatefulWidget {
   String id;
@@ -255,7 +256,13 @@ class _SkinDetailState extends State<SkinDetail> {
                 ],
               );
             } else {
-              return Container();
+              return Center(
+                child: ErrorComponent(onRetryTapped: () => {
+                  BlocProvider.of<SkinCubit>(context).getSkin(widget.id).then((value) => {
+                  BlocProvider.of<VideoCubit>(context).setVideo(context, BlocProvider.of<SkinCubit>(context).skin.levels![selectedVideoIndex].streamedVideo)
+                  })
+                }),
+              );
             }
           },
         ),

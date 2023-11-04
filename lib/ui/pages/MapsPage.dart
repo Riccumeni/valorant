@@ -67,7 +67,6 @@ class _MapsPageState extends State<MapsPage> {
                             image: DecorationImage(
                                 opacity: 0.7,
                                 fit: BoxFit.cover,
-                                // TODO: Scegliere listViewIcon (leggera ma peggiore) o splash (pesante ma migliore)
                                 image: NetworkImage(
                                   state
                                       .mapsResponse?.data![index].listViewIcon ?? "",
@@ -90,7 +89,7 @@ class _MapsPageState extends State<MapsPage> {
               ),
             );
           } else {
-            return const ErrorComponent();
+            return ErrorComponent(onRetryTapped: () => BlocProvider.of<MapsCubit>(context).getMaps(),);
           }
         }));
   }

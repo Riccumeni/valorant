@@ -24,11 +24,11 @@ class _WeaponsPageState extends State<WeaponsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         elevation: 0,
         toolbarHeight: 70,
-        backgroundColor: const Color.fromARGB(255, 38, 38, 38),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         leading: IconButton(
           onPressed: () {
             context.pop();
@@ -68,7 +68,7 @@ class _WeaponsPageState extends State<WeaponsPage> {
                         width: MediaQuery.of(context).size.width,
                         height: 160,
                         decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 45, 45, 45),
+                            color: Theme.of(context).colorScheme.primaryContainer,
                             image: DecorationImage(
                                 alignment: const Alignment(0.8, 0),
                                 scale: 2.4,
@@ -90,7 +90,7 @@ class _WeaponsPageState extends State<WeaponsPage> {
                   );
                 });
           } else{
-              return const ErrorComponent();
+              return ErrorComponent(onRetryTapped: () => BlocProvider.of<WeaponCubit>(context).getWeapons(),);
           }
 
         },

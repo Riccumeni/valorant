@@ -50,7 +50,7 @@ class _ChampionListPageState extends State<ChampionListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: false,
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           toolbarHeight: 70,
@@ -184,7 +184,7 @@ class _ChampionListPageState extends State<ChampionListPage> {
                       ),
                     );
                   } else {
-                    return const ErrorComponent();
+                    return  ErrorComponent(onRetryTapped: () => BlocProvider.of<ChampionsCubit>(context).getChampions(),);
                   }
                 },
               ),

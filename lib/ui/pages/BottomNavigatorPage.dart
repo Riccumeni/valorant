@@ -20,6 +20,96 @@ import 'package:valorant/ui/pages/MapDetailPage.dart';
 import 'package:valorant/ui/pages/SkinDetailPage.dart';
 
 
+const ColorScheme theme = ColorScheme(
+    brightness: Brightness.dark,
+    primary:  Color.fromARGB(255,235, 86, 91),
+    onPrimary: Color.fromARGB(255, 30, 30, 30),
+    primaryContainer: Color.fromARGB(255, 38, 38, 38),
+    onPrimaryContainer: Color.fromARGB(255, 255, 255, 255),
+    error: Color.fromARGB(255,235, 86, 91),
+    onError: Color.fromARGB(255, 255, 255, 255),
+    background: Color.fromARGB(255, 30, 30, 30),
+    onBackground: Color.fromARGB(255, 255, 255, 255),
+    secondary: Color.fromARGB(255, 38, 38, 38),
+    secondaryContainer: Color.fromARGB(255, 38, 38, 38),
+    onSecondary: Color.fromARGB(255, 38, 38, 38),
+    surface: Color.fromARGB(255, 38, 38, 38),
+    onSurface: Color.fromARGB(255, 38, 38, 38)
+);
+
+final GoRouter router = GoRouter(initialLocation: "/", routes: [
+  GoRoute(path: '/', builder: (context, state) => const HomePage()),
+  GoRoute(
+      path: '/champions', builder: (context, state) => ChampionListPage()),
+  GoRoute(
+    path: '/champion-detail',
+    pageBuilder: (context, state) {
+      return CustomTransitionPage(
+          key: state.pageKey,
+          child: ChampionDetailPage(),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) {
+            return ScaleTransition(
+              scale: CurveTween(curve: Curves.easeOutCirc).animate(animation),
+              child: child,
+            );
+          });
+    },
+  ),
+  GoRoute(
+    path: '/weapons',
+    builder: (context, state) => WeaponsPage(),
+  ),
+  GoRoute(
+      path: '/weapon-detail', builder: (context, state) => WeaponDetail()),
+  GoRoute(path: '/maps', builder: (context, state) => MapsPage()),
+  GoRoute(path: '/map-detail', builder: (context, state) => MapDetail()),
+  GoRoute(
+      path: '/skin-detail/:id',
+      name: 'skin-detail',
+      builder: (context, state) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => SkinCubit()),
+          BlocProvider(create: (context) => VideoCubit()),
+        ],
+        child: SkinDetail(
+          id: state.pathParameters['id'] ?? '',
+        ),
+      )),
+]);
+
+final GoRouter favouriteRouter = GoRouter(initialLocation: '/', routes: [
+  GoRoute(path: '/', builder: (context, state) => FavouritePage()),
+  GoRoute(
+      path: '/skin-detail/:id',
+      name: 'skin-detail',
+      builder: (context, state) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => SkinCubit()),
+          BlocProvider(create: (context) => VideoCubit()),
+        ],
+        child: SkinDetail(
+          id: state.pathParameters['id'] ?? '',
+        ),
+      )),
+]);
+
+final List<Widget> _widgetOptions = <Widget>[
+  MaterialApp.router(
+    theme: ThemeData(
+      colorScheme: theme,
+    ),
+    routerConfig: router,
+  ),
+  MaterialApp.router(
+    theme: ThemeData(
+      colorScheme: theme,
+    ),
+    routerConfig: favouriteRouter,
+  )
+];
+
+
 class BottomNavigator extends StatefulWidget {
   const BottomNavigator({super.key});
 
@@ -30,96 +120,6 @@ class BottomNavigator extends StatefulWidget {
 class _BottomNavigatorState extends State<BottomNavigator> {
   int _selectedIndex = 0;
 
-  static const ColorScheme theme = ColorScheme(
-      brightness: Brightness.dark,
-      primary:  Color.fromARGB(255,235, 86, 91),
-      onPrimary: Color.fromARGB(255, 30, 30, 30),
-      primaryContainer: Color.fromARGB(255, 38, 38, 38),
-      onPrimaryContainer: Color.fromARGB(255, 255, 255, 255),
-      error: Color.fromARGB(255,235, 86, 91),
-      onError: Color.fromARGB(255, 255, 255, 255),
-      background: Color.fromARGB(255, 30, 30, 30),
-      onBackground: Color.fromARGB(255, 255, 255, 255),
-      secondary: Color.fromARGB(255, 38, 38, 38),
-      secondaryContainer: Color.fromARGB(255, 38, 38, 38),
-      onSecondary: Color.fromARGB(255, 38, 38, 38),
-      surface: Color.fromARGB(255, 38, 38, 38),
-      onSurface: Color.fromARGB(255, 38, 38, 38)
-  );
-
-  static final GoRouter router = GoRouter(initialLocation: "/", routes: [
-    GoRoute(path: '/', builder: (context, state) => const HomePage()),
-    GoRoute(
-        path: '/champions', builder: (context, state) => ChampionListPage()),
-    GoRoute(
-      path: '/champion-detail',
-      pageBuilder: (context, state) {
-        return CustomTransitionPage(
-            key: state.pageKey,
-            child: ChampionDetailPage(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return ScaleTransition(
-                scale: CurveTween(curve: Curves.easeOutCirc).animate(animation),
-                child: child,
-              );
-            });
-      },
-    ),
-    GoRoute(
-      path: '/weapons',
-      builder: (context, state) => WeaponsPage(),
-    ),
-    GoRoute(
-        path: '/weapon-detail', builder: (context, state) => WeaponDetail()),
-    GoRoute(path: '/maps', builder: (context, state) => MapsPage()),
-    GoRoute(path: '/map-detail', builder: (context, state) => MapDetail()),
-    GoRoute(
-        path: '/skin-detail/:id',
-        name: 'skin-detail',
-        builder: (context, state) => MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (context) => SkinCubit()),
-                BlocProvider(create: (context) => VideoCubit()),
-              ],
-              child: SkinDetail(
-                id: state.pathParameters['id'] ?? '',
-              ),
-            )),
-  ]);
-
-  static final GoRouter favouriteRouter =
-      GoRouter(initialLocation: '/', routes: [
-    GoRoute(path: '/', builder: (context, state) => FavouritePage()),
-    GoRoute(
-        path: '/skin-detail/:id',
-        name: 'skin-detail',
-        builder: (context, state) => MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (context) => SkinCubit()),
-                BlocProvider(create: (context) => VideoCubit()),
-              ],
-              child: SkinDetail(
-                id: state.pathParameters['id'] ?? '',
-              ),
-            )),
-  ]);
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    MaterialApp.router(
-      theme: ThemeData(
-        colorScheme: theme,
-      ),
-      routerConfig: router,
-    ),
-    MaterialApp.router(
-      theme: ThemeData(
-        colorScheme: theme,
-      ),
-      routerConfig: favouriteRouter,
-    )
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -128,7 +128,6 @@ class _BottomNavigatorState extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
-
 
     return Scaffold(
       body: Center(
