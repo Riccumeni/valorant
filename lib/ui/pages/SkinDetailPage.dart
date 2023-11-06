@@ -215,7 +215,7 @@ class _SkinDetailState extends State<SkinDetail> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  if(skin.levels.isNotEmpty && skin.levels[0].streamedVideo != null )
+                                  if(skin.levels.isNotEmpty && skin.levels[0].streamedVideo != null)
                                     for (int i = 0; i < skin.levels.length; i++)
                                       InkWell(
                                         onTap: (){
@@ -229,8 +229,8 @@ class _SkinDetailState extends State<SkinDetail> {
                                             borderRadius: BorderRadius.circular(5),
                                             color: selectedVideoIndex == i ? Colors.white : Colors.grey.shade600,
                                           ),
-                                          padding: EdgeInsets.all(5),
-                                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                                          padding: const EdgeInsets.all(5),
+                                          margin: const EdgeInsets.symmetric(horizontal: 7, vertical: 20),
                                           width: 50,
                                           height: 30,
                                           child: Center(

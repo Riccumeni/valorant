@@ -23,11 +23,11 @@ class HomeCard extends StatelessWidget {
             title,
             style: const TextStyle(
               fontFamily: 'monument',
-              fontSize: 24,
+              fontSize: 22,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             description,
             style: const TextStyle(
@@ -40,8 +40,8 @@ class HomeCard extends StatelessWidget {
       ),
       Image.asset(
         imageUrl,
-        height: 165,
-        width: 170,
+        height: 145,
+        width: 165,
       )
     ];
 

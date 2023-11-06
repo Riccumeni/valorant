@@ -21,6 +21,7 @@ class ProgressStat extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 20),
         Text(
           "$category: $value",
           style: const TextStyle(
