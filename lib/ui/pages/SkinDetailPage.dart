@@ -18,7 +18,6 @@ class SkinDetail extends StatefulWidget {
 
 class _SkinDetailState extends State<SkinDetail> {
 
-
   int selectedChromaIndex = 0;
   int selectedLevelsIndex = 0;
   int selectedVideoIndex = 0;
@@ -48,6 +47,13 @@ class _SkinDetailState extends State<SkinDetail> {
   }
 
   @override
+  void deactivate() {
+    // TODO: implement deactivate
+    super.deactivate();
+    BlocProvider.of<VideoCubit>(context).disposeVideo();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -56,6 +62,7 @@ class _SkinDetailState extends State<SkinDetail> {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         leading: IconButton(
           onPressed: () {
+            BlocProvider.of<VideoCubit>(context).disposeVideo();
             context.pop();
           },
           icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
@@ -72,195 +79,201 @@ class _SkinDetailState extends State<SkinDetail> {
         ),
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: BlocBuilder<SkinCubit, SkinState>(
-          builder: (context, state) {
-            if (state is SkinLoading) {
-              return Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary,));
-            } else if (state is SkinSuccess) {
-              var skin = state.skinResponse.data;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(8.0),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 120),
-                      child: SizedBox(
-                        width: double.maxFinite,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                  height: 150,
-                                  child: Image.network(skin
-                                      .chromas[selectedChromaIndex]
-                                      .fullRender ??
-                                      '')
-                                      .animate()
-                                      .fade(begin: 0, end: 1, duration: 1000.ms)
-                                //.scale(delay: 500.ms),
-                              ),
-                              const SizedBox(
-                                height: 90,
-                              ),
-                              Text(
-                                skin.chromas[selectedChromaIndex].displayName
-                                    .toUpperCase() ??
-                                    "",
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontFamily: 'monument',
-                                  fontSize: 16,
-                                  color: Colors.white,
+      body: WillPopScope(
+        onWillPop: () async {
+          BlocProvider.of<VideoCubit>(context).disposeVideo();
+          return true;
+        },
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: BlocBuilder<SkinCubit, SkinState>(
+            builder: (context, state) {
+              if (state is SkinLoading) {
+                return Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary,));
+              } else if (state is SkinSuccess) {
+                var skin = state.skinResponse.data;
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 120),
+                        child: SizedBox(
+                          width: double.maxFinite,
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                    height: 150,
+                                    child: Image.network(skin
+                                        .chromas[selectedChromaIndex]
+                                        .fullRender ??
+                                        '')
+                                        .animate()
+                                        .fade(begin: 0, end: 1, duration: 1000.ms)
+                                  //.scale(delay: 500.ms),
                                 ),
-                              ),
-                              if (skin.chromas[selectedChromaIndex].swatch !=
-                                  null)
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 35, bottom: 30, top: 35),
-                                  alignment: Alignment.centerLeft,
-                                  child: const Text(
-                                    "Chromes",
-                                    style: TextStyle(
-                                      fontFamily: 'monument',
-                                      fontSize: 22,
-                                      color: Colors.white,
-                                    ),
+                                const SizedBox(
+                                  height: 90,
+                                ),
+                                Text(
+                                  skin.chromas[selectedChromaIndex].displayName
+                                      .toUpperCase() ??
+                                      "",
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontFamily: 'monument',
+                                    fontSize: 16,
+                                    color: Colors.white,
                                   ),
                                 ),
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  for (int i = 0; i < skin.chromas.length; i++)
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedChromaIndex = i;
-                                          isOnPress = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 74,
-                                        child: Column(
-                                          children: [
-                                            if (skin.chromas[i].swatch != null)
-                                              Image.network(
-                                                skin.chromas[i].swatch ?? '',
-                                                width: 50,
-                                                height: 50,
-                                              ),
-                                            if (isOnPress &&
-                                                selectedChromaIndex == i)
-                                              const Icon(Icons.horizontal_rule,
-                                                  color: Colors.white)
-                                                  .animate()
-                                                  .fade(
-                                                  begin: 0,
-                                                  end: 1,
-                                                  duration: 1000.ms),
-                                            if (skin.chromas[i].swatch !=
-                                                null &&
-                                                i == 0 &&
-                                                !isOnPress)
-                                              const Icon(Icons.horizontal_rule,
-                                                  color: Colors.white),
-                                          ],
-                                        ),
+                                if (skin.chromas[selectedChromaIndex].swatch !=
+                                    null)
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 35, bottom: 30, top: 35),
+                                    alignment: Alignment.centerLeft,
+                                    child: const Text(
+                                      "Chromes",
+                                      style: TextStyle(
+                                        fontFamily: 'monument',
+                                        fontSize: 22,
+                                        color: Colors.white,
                                       ),
                                     ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 25,
-                              ),
-                                BlocBuilder<VideoCubit, VideoState>(
-
-                                    builder: (context, state){
-                                    if(state is VideoSuccess){
-                                      return Container(
-                                        height: 250,
-                                        child: CustomVideoPlayer(
-                                          customVideoPlayerController: state.videoPlayerController,
-                                        ),
-                                      );
-                                    } else if(state is VideoLoading){
-                                      return SizedBox(
-                                        height: 250,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            color: Theme.of(context).colorScheme.primary,
-                                          ),
-                                        ),
-                                      );
-                                    }else if(state is VideoError){
-                                      return const SizedBox(
-                                        height: 250,
-                                          child: Center(child: Text("Error loading video", style: TextStyle(fontFamily: "monument", fontSize: 16, color: Colors.white),)));
-                                    }else{
-                                      return SizedBox();
-                                    }
-                                  }
-                                ),
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  if(skin.levels.isNotEmpty && skin.levels[0].streamedVideo != null )
-                                    for (int i = 0; i < skin.levels.length; i++)
-                                      InkWell(
-                                        onTap: (){
+                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    for (int i = 0; i < skin.chromas.length; i++)
+                                      GestureDetector(
+                                        onTap: () {
                                           setState(() {
-                                            selectedVideoIndex = i;
-                                            BlocProvider.of<VideoCubit>(context).setVideo(context, skin.levels[selectedVideoIndex].streamedVideo);
+                                            selectedChromaIndex = i;
+                                            isOnPress = true;
                                           });
                                         },
                                         child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            color: selectedVideoIndex == i ? Colors.white : Colors.grey.shade600,
+                                          height: 74,
+                                          child: Column(
+                                            children: [
+                                              if (skin.chromas[i].swatch != null)
+                                                Image.network(
+                                                  skin.chromas[i].swatch ?? '',
+                                                  width: 50,
+                                                  height: 50,
+                                                ),
+                                              if (isOnPress &&
+                                                  selectedChromaIndex == i)
+                                                const Icon(Icons.horizontal_rule,
+                                                    color: Colors.white)
+                                                    .animate()
+                                                    .fade(
+                                                    begin: 0,
+                                                    end: 1,
+                                                    duration: 1000.ms),
+                                              if (skin.chromas[i].swatch !=
+                                                  null &&
+                                                  i == 0 &&
+                                                  !isOnPress)
+                                                const Icon(Icons.horizontal_rule,
+                                                    color: Colors.white),
+                                            ],
                                           ),
-                                          padding: EdgeInsets.all(5),
-                                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                                          width: 50,
-                                          height: 30,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 25,
+                                ),
+                                  BlocBuilder<VideoCubit, VideoState>(
+
+                                      builder: (context, state){
+                                      if(state is VideoSuccess){
+                                        return Container(
+                                          height: 250,
+                                          child: CustomVideoPlayer(
+                                            customVideoPlayerController: state.videoPlayerController,
+                                          ),
+                                        );
+                                      } else if(state is VideoLoading){
+                                        return SizedBox(
+                                          height: 250,
                                           child: Center(
-                                            child: Text(
-                                              (i + 1).toString(),
-                                              style: TextStyle(
-                                                fontFamily: 'monument',
-                                                fontSize: 18,
-                                                color: selectedVideoIndex == i ? Colors.black : Colors.white,
+                                            child: CircularProgressIndicator(
+                                              color: Theme.of(context).colorScheme.primary,
+                                            ),
+                                          ),
+                                        );
+                                      }else if(state is VideoError || state is VideoEmpty){
+                                        return const SizedBox(
+                                          height: 250,
+                                            child: Center(child: Text("Error loading video", style: TextStyle(fontFamily: "monument", fontSize: 16, color: Colors.white),)));
+                                      }else{
+                                        return SizedBox();
+                                      }
+                                    }
+                                  ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    if(skin.levels.isNotEmpty && skin.levels[0].streamedVideo != null )
+                                      for (int i = 0; i < skin.levels.length; i++)
+                                        InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              selectedVideoIndex = i;
+                                              BlocProvider.of<VideoCubit>(context).setVideo(context, skin.levels[selectedVideoIndex].streamedVideo);
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(5),
+                                              color: selectedVideoIndex == i ? Colors.white : Colors.grey.shade600,
+                                            ),
+                                            padding: EdgeInsets.all(5),
+                                            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                                            width: 50,
+                                            height: 30,
+                                            child: Center(
+                                              child: Text(
+                                                (i + 1).toString(),
+                                                style: TextStyle(
+                                                  fontFamily: 'monument',
+                                                  fontSize: 18,
+                                                  color: selectedVideoIndex == i ? Colors.black : Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                  ],
-                              )
-                            ],
+                                        )
+                                    ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            } else {
-              return Center(
-                child: ErrorComponent(onRetryTapped: () => {
-                  BlocProvider.of<SkinCubit>(context).getSkin(widget.id).then((value) => {
-                  BlocProvider.of<VideoCubit>(context).setVideo(context, BlocProvider.of<SkinCubit>(context).skin.levels![selectedVideoIndex].streamedVideo)
-                  })
-                }),
-              );
-            }
-          },
+                  ],
+                );
+              } else {
+                return Center(
+                  child: ErrorComponent(onRetryTapped: () => {
+                    BlocProvider.of<SkinCubit>(context).getSkin(widget.id).then((value) => {
+                    BlocProvider.of<VideoCubit>(context).setVideo(context, BlocProvider.of<SkinCubit>(context).skin.levels![selectedVideoIndex].streamedVideo)
+                    })
+                  }),
+                );
+              }
+            },
+          ),
         ),
       ),
     );

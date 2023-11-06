@@ -9,6 +9,10 @@ class VideoCubit extends Cubit<VideoState> {
 
   CustomVideoPlayerController? customVideoPlayerController;
 
+  Future<void> disposeVideo() async{
+    customVideoPlayerController?.dispose();
+  }
+
   Future<void> setVideo(context, url)async {
     emit(VideoLoading());
     try{

@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:valorant/business_logic/bloc/map/maps_cubit.dart';
 import 'package:valorant/business_logic/bloc/skins/skin_cubit.dart';
@@ -128,7 +126,6 @@ class _BottomNavigatorState extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
         child: MultiBlocProvider(
