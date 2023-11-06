@@ -23,11 +23,6 @@ class ValorantRepository{
     return championsResponse;
   }
 
-  Future<ChampionResponse> getChampion(String id) async{
-    final String raw = await valorantAPI.getChampion(id);
 
-    final ChampionResponse championResponse = ChampionResponse.fromJson(jsonDecode(raw));
 
-    return championResponse;
-  }
 }

@@ -578,28 +578,30 @@ class _WeaponDetailState extends State<WeaponDetail> {
                         const SizedBox(height: 20),
 
                         if (weapon.weaponStats?.adsStats != null)
-
+                          weapon.weaponStats!.adsStats?.zoomMultiplier != null ?
                           ProgressStat(
                               category: "Zoom Multiplier",
                               value: weapon.weaponStats?.adsStats?.zoomMultiplier.toString() ?? "",
                               maxValue: 3.5
-                          ),
+                          ) : Text(""),
 
                           const SizedBox(height: 20),
 
+                        weapon.weaponStats!.adsStats?.fireRate != null ?
                           ProgressStat(
                               category: "Fire Rate",
                               value: weapon.weaponStats?.adsStats?.fireRate.round().toString() ?? "",
                               maxValue: 16.0
-                          ),
+                          ) : Text(""),
 
                           const SizedBox(height: 20),
 
+                        weapon.weaponStats!.adsStats?.firstBulletAccuracy != null ?
                           ProgressStat(
                               category: "First Bullet Accuracy",
                               value: weapon.weaponStats?.firstBulletAccuracy.toString() ?? "",
                               maxValue: 5.0
-                          ),
+                          ) : Text(""),
                       ],
                     ),
                   const SizedBox(height: 25),

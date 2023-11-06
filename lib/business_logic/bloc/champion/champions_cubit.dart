@@ -49,17 +49,6 @@ class ChampionsCubit extends Cubit<ChampionsState> {
     }
   }
 
-  Future<void> getChampion(String id) async {
-    emit(LoadingChampionsState());
-
-    try{
-      ChampionResponse response = await repository.getChampion(id);
-      emit(SuccessChampionState(championResponse: response));
-    }catch(e){
-      emit(ErrorChampionsState());
-    }
-  }
-
   void setChampion(Champion tappedChamp){
     champ = tappedChamp;
   }

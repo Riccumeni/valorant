@@ -77,11 +77,7 @@ class _SkinDetailState extends State<SkinDetail> {
         child: BlocBuilder<SkinCubit, SkinState>(
           builder: (context, state) {
             if (state is SkinLoading) {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary,))
-              );
+              return Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary,));
             } else if (state is SkinSuccess) {
               var skin = state.skinResponse.data;
               return Column(

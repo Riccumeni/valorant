@@ -30,9 +30,11 @@ class SkinCubit extends Cubit<SkinState> {
       for (var element in skins) {
         if (favs.isNotEmpty) {
           for (Map<String, dynamic> fav in favs) {
+            bool included = false;
             if (element.uuid == fav['uuid']) {
               element.isFavourite = true;
-            } else {
+              included = true;
+            }else if(element.uuid != fav['uuid'] && included == false) {
               element.isFavourite = false;
             }
           }

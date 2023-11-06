@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,12 +14,14 @@ class FavouritePage extends StatefulWidget {
 }
 
 class _FavouritePageState extends State<FavouritePage> {
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     BlocProvider.of<SkinCubit>(context).getSkinsByFavourite();
   }
+
   @override
   Widget build(BuildContext context) {
 
