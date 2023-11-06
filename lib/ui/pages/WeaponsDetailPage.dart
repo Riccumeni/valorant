@@ -76,7 +76,10 @@ class _WeaponDetailState extends State<WeaponDetail> {
           onPressed: () {
             context.pop();
           },
-          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
         ),
         toolbarHeight: 64,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -85,11 +88,10 @@ class _WeaponDetailState extends State<WeaponDetail> {
             margin: const EdgeInsets.only(top: 0, right: 60),
             child: Text(
               weapon.displayName.toUpperCase() ?? "",
-              style:  TextStyle(
-                fontFamily: 'monument',
-                fontSize: 28,
-                color: Theme.of(context).colorScheme.onPrimaryContainer
-              ),
+              style: TextStyle(
+                  fontFamily: 'monument',
+                  fontSize: 28,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer),
             ),
           ),
         ),
@@ -129,8 +131,7 @@ class _WeaponDetailState extends State<WeaponDetail> {
                                     style: const TextStyle(
                                         fontFamily: 'monument',
                                         fontSize: 16,
-                                        color: Colors.white
-                                    ),
+                                        color: Colors.white),
                                   ),
                                   const SizedBox(
                                     height: 20,
@@ -278,10 +279,10 @@ class _WeaponDetailState extends State<WeaponDetail> {
                   if (range1 || range2 || range3)
                     Column(
                       children: [
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children:  [
+                          children: const [
                             SizedBox(height: 25),
                             Align(
                               alignment: Alignment.centerLeft,
@@ -546,7 +547,6 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             ),
                           ],
                         ),
-
                         const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -558,53 +558,49 @@ class _WeaponDetailState extends State<WeaponDetail> {
                             ),
                           ),
                         ),
-
-                        const SizedBox(height: 15),
-
                         ProgressStat(
                             category: "Reload Time Seconds",
-                            value: weapon.weaponStats?.reloadTimeSeconds.toString() ?? "",
-                            maxValue: 5.0
-                        ),
-
-                        const SizedBox(height: 20),
-
+                            value: weapon.weaponStats?.reloadTimeSeconds
+                                    .toString() ??
+                                "",
+                            maxValue: 5.0),
                         ProgressStat(
                             category: "Magazine Size",
-                            value: weapon.weaponStats?.magazineSize.toString() ?? "",
-                            maxValue: 100.0
-                        ),
-
-                        const SizedBox(height: 20),
-
+                            value:
+                                weapon.weaponStats?.magazineSize.toString() ??
+                                    "",
+                            maxValue: 100.0),
                         if (weapon.weaponStats?.adsStats != null)
-                          weapon.weaponStats!.adsStats?.zoomMultiplier != null ?
-                          ProgressStat(
-                              category: "Zoom Multiplier",
-                              value: weapon.weaponStats?.adsStats?.zoomMultiplier.toString() ?? "",
-                              maxValue: 3.5
-                          ) : Text(""),
-
-                          const SizedBox(height: 20),
-
-                        weapon.weaponStats!.adsStats?.fireRate != null ?
-                          ProgressStat(
-                              category: "Fire Rate",
-                              value: weapon.weaponStats?.adsStats?.fireRate.round().toString() ?? "",
-                              maxValue: 16.0
-                          ) : Text(""),
-
-                          const SizedBox(height: 20),
-
-                        weapon.weaponStats!.adsStats?.firstBulletAccuracy != null ?
-                          ProgressStat(
-                              category: "First Bullet Accuracy",
-                              value: weapon.weaponStats?.firstBulletAccuracy.toString() ?? "",
-                              maxValue: 5.0
-                          ) : Text(""),
+                          weapon.weaponStats?.adsStats?.zoomMultiplier != null
+                              ? ProgressStat(
+                                  category: "Zoom Multiplier",
+                                  value: weapon
+                                          .weaponStats?.adsStats?.zoomMultiplier
+                                          .toString() ??
+                                      "",
+                                  maxValue: 3.5)
+                              :  const SizedBox(),
+                        weapon.weaponStats?.adsStats?.fireRate != null
+                            ? ProgressStat(
+                                category: "Fire Rate",
+                                value: weapon.weaponStats?.adsStats?.fireRate
+                                        .round()
+                                        .toString() ??
+                                    "",
+                                maxValue: 16.0)
+                            :  const SizedBox(),
+                        weapon.weaponStats?.adsStats?.firstBulletAccuracy !=
+                                null
+                            ? ProgressStat(
+                                category: "First Bullet Accuracy",
+                                value: weapon.weaponStats?.firstBulletAccuracy
+                                        .toString() ??
+                                    "",
+                                maxValue: 5.0)
+                            :  const SizedBox(),
                       ],
                     ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 15),
                 ],
               ),
             ),

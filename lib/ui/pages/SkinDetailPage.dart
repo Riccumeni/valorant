@@ -204,6 +204,10 @@ class _SkinDetailState extends State<SkinDetail> {
                                       } else if(state is VideoLoading){
                                         return SizedBox(
                                           height: 250,
+                                          padding: const EdgeInsets.all(5),
+                                          margin: const EdgeInsets.symmetric(horizontal: 7, vertical: 20),
+                                          width: 50,
+                                          height: 30,
                                           child: Center(
                                             child: CircularProgressIndicator(
                                               color: Theme.of(context).colorScheme.primary,
